@@ -30,14 +30,14 @@ void routine_ascend(void)
     DS3231_Read_All();
 
     /* get handler */
-    DS3231_t RTC = DS3231_Get_Struct();
+    DS3231_t RTC_I2C = DS3231_Get_Struct();
 
     /* Temporal window [pooling mode]*/
-    if(RTC.Sec >= 20)
+    if(RTC_I2C.Sec >= 20)
     {
         phase_set(PHASE_DEPLOY);
     }
-    else if(RTC.Sec >= 17)
+    else if(RTC_I2C.Sec >= 17)
     {
 
     }

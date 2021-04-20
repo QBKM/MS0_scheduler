@@ -89,7 +89,7 @@ typedef struct
 -- ------------------------------------------------------------- */
 uint8_t DS3231_Init(void);
 
-DS3231_t DS3231_Get_Struct(void)
+DS3231_t DS3231_Get_Struct(void);
 
 uint8_t DS3231_Read_All(void);
 uint8_t DS3231_Read_Time(void);
