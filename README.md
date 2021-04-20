@@ -1,6 +1,10 @@
 # MS0_scheduler_v3
+# MINES SPACE
 
+The software is a part of the Marsaut 0 mission. It aims to schedule the rocket with his severals equipments and algorithms. 
 This project has been generated on STMCubeIDE. 
+
+For more details, please contact me at : quentin.bakrim@hotmail.fr
 
 How to use :
 1. Import the project in STMCubeIDE
