@@ -21,7 +21,7 @@ phase_t phase_get(void)
 
 void routine_wait(void)
 {
-
+    MPU6050_Read_All_Kalman();
 }
 void routine_ascend(void)
 {

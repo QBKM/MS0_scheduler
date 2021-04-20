@@ -22,7 +22,25 @@
 /* ------------------------------------------------------------- --
    Variables
 -- ------------------------------------------------------------- */
+static uint32_t timer = 0;
+
+/* MPU6050 struct */
 static MPU6050_t MPU6050;
+    
+/* initialiaze the X axis Kalman */
+static Kalman_t KalmanX = 
+{
+    .Q_angle   = 0.001f,
+    .Q_bias    = 0.003f,
+    .R_measure = 0.03f
+};
+/* initialiaze the Y axis Kalman */
+static Kalman_t KalmanY = 
+{
+    .Q_angle   = 0.001f,
+    .Q_bias    = 0.003f,
+    .R_measure = 0.03f,
+};
 
 /* accel correctors */
 const double Accel_X_Y_Z_corrector = 2048.0; 
@@ -49,7 +67,7 @@ const double Gyro_X_Y_Z_corrector = 16.4;
  *
  * @args
  * ************************************************************* */
-uint8_t MPU6050_Init() {
+uint8_t MPU6050_Init(void) {
     uint8_t check;
     uint8_t data;
 
@@ -62,6 +80,8 @@ uint8_t MPU6050_Init() {
     MPU6050.Gx = 0.0;
     MPU6050.Gy = 0.0;
     MPU6050.Gz = 0.0;
+
+
 
     /* Structure to configure the MPU6050 */
     MPU6050_config_t config =
@@ -105,7 +125,7 @@ uint8_t MPU6050_Init() {
  *
  * @args
  * ************************************************************* */
-uint8_t MPU6050_Read_Accel()
+uint8_t MPU6050_Read_Accel(void)
 {
     uint8_t data[6];
 
@@ -131,7 +151,7 @@ uint8_t MPU6050_Read_Accel()
  *
  * @args
  * ************************************************************* */
-uint8_t MPU6050_Read_Gyro()
+uint8_t MPU6050_Read_Gyro(void)
 {
     uint8_t data[6];
 
@@ -156,7 +176,7 @@ uint8_t MPU6050_Read_Gyro()
  *
  * @args
  * ************************************************************* */
-uint8_t MPU6050_Read_Temp()
+uint8_t MPU6050_Read_Temp(void)
 {
     uint8_t data[2];
     int16_t temp;
@@ -177,7 +197,7 @@ uint8_t MPU6050_Read_Temp()
  *
  * @args
  * ************************************************************* */
-uint8_t MPU6050_Read_All()
+uint8_t MPU6050_Read_All(void)
 {
     uint8_t data[14];
 
@@ -212,3 +232,68 @@ uint8_t MPU6050_Read_All()
 
     return HAL_OK;
 }
+
+uint8_t MPU6050_Read_All_Kalman(void)
+{
+    MPU6050_Read_All();
+
+    // Kalman angle solve
+    double dt = (double) (HAL_GetTick() - timer) / 1000;
+    timer = HAL_GetTick();
+    double roll;
+    double roll_sqrt = sqrt(
+            MPU6050.Accel_X_RAW * MPU6050.Accel_X_RAW + MPU6050.Accel_Z_RAW * MPU6050.Accel_Z_RAW);
+    if (roll_sqrt != 0.0) {
+        roll = atan(MPU6050.Accel_Y_RAW / roll_sqrt) * RAD_TO_DEG;
+    } else {
+        roll = 0.0;
+    }
+    double pitch = atan2(-MPU6050.Accel_X_RAW, MPU6050.Accel_Z_RAW) * RAD_TO_DEG;
+    if ((pitch < -90 && MPU6050.KalmanAngleY > 90) || (pitch > 90 && MPU6050.KalmanAngleY < -90)) {
+        KalmanY.angle = pitch;
+        MPU6050.KalmanAngleY = pitch;
+    } else {
+        MPU6050.KalmanAngleY = MPU6050_Kalman_getAngle(&KalmanY, pitch, MPU6050.Gy, dt);
+    }
+    if (fabs(MPU6050.KalmanAngleY) > 90)
+        MPU6050.Gx = -MPU6050.Gx;
+    MPU6050.KalmanAngleX = MPU6050_Kalman_getAngle(&KalmanX, roll, MPU6050.Gy, dt);
+
+    return HAL_OK;
+}
+
+/* ************************************************************* *
+ * @name		MPU6050_Kalman_getAngle
+ * @brief		return the Kalman angle
+ *
+ * @args
+ * ************************************************************* */
+double MPU6050_Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt) 
+{
+    double rate = newRate - Kalman->bias;
+    Kalman->angle += dt * rate;
+
+    Kalman->P[0][0] += dt * (dt * Kalman->P[1][1] - Kalman->P[0][1] - Kalman->P[1][0] + Kalman->Q_angle);
+    Kalman->P[0][1] -= dt * Kalman->P[1][1];
+    Kalman->P[1][0] -= dt * Kalman->P[1][1];
+    Kalman->P[1][1] += Kalman->Q_bias * dt;
+
+    double S = Kalman->P[0][0] + Kalman->R_measure;
+    double K[2];
+    K[0] = Kalman->P[0][0] / S;
+    K[1] = Kalman->P[1][0] / S;
+
+    double y = newAngle - Kalman->angle;
+    Kalman->angle += K[0] * y;
+    Kalman->bias += K[1] * y;
+
+    double P00_temp = Kalman->P[0][0];
+    double P01_temp = Kalman->P[0][1];
+
+    Kalman->P[0][0] -= K[0] * P00_temp;
+    Kalman->P[0][1] -= K[0] * P01_temp;
+    Kalman->P[1][0] -= K[1] * P00_temp;
+    Kalman->P[1][1] -= K[1] * P01_temp;
+
+    return Kalman->angle;
+};
