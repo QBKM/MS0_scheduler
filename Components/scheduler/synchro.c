@@ -16,6 +16,7 @@
 
 synchro_t synchro;
 uint32_t duration;
+uint32_t max_duration;
 
 /**
  * @brief init the synchro
@@ -46,7 +47,13 @@ void synchro_update(void)
  * 
  */
 void synchro_wait(void)
-{
+{ 
+    /* get the cycle duration */
     duration = (HAL_GetTick() - synchro.time_ref);
+
+    /* record the max cycle duration */
+    if(max_duration < duration) max_duration = duration;
+
+    /* idle until the sync time */
     while(HAL_GetTick() < synchro.time_sync);
 }
