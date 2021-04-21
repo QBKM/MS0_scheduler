@@ -26,7 +26,7 @@ jack_t jack;
  * @brief init the jack
  * 
  */
-void init_jack(void)
+void jack_init(void)
 {
     jack_t temp =
     {
@@ -58,7 +58,12 @@ void IT_routine_jack(void)
     jack.IT_flag		= false;
     jack.jack_status 	= true;
     
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_SR_UIF);
     HAL_TIM_Base_Start_IT(&htim2);
+
+    __HAL_TIM_CLEAR_FLAG(&htim3, TIM_SR_UIF);
+    HAL_TIM_Base_Start_IT(&htim3);
+
     DS3231_Init();
     
     broadcast_uart(ID_phase_ascend);

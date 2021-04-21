@@ -1,46 +1,95 @@
 #include "window.h"
 
+window_t window_pool;
+window_t window_it;
 
+bool IT_flag_unlock;
+bool IT_flag_unlock_enable;
+bool IT_flag_relock;
+bool IT_flag_relock_enable;
 
-window_t window;
-
-void init_window()
+void window_init(void)
 {
-    window.flag_close   = false;
-    window.flag_open    = false;
-    window.flag_forced  = false;
+    window_pool = w_flag_lock;
+    window_it   = w_flag_lock;
+
+    IT_flag_unlock = false;
+    IT_flag_relock = false;
+
+    IT_flag_unlock_enable = true;
+    IT_flag_relock_enable = true;
 }
 
-void set_window_open_flag(bool flag)
+void window_set_pool_flag(window_t flag)
 {
-    window.flag_open    = flag;
-}
-void set_window_close_IT_flag(bool flag)
-{
-    window.flag_close    = flag;
+    window_pool = flag;
 }
 
-void set_window_forced_flag(bool flag)
+void window_set_it_flag(window_t flag)
 {
-    window.flag_forced    = flag;
+    window_it = flag;
 }
 
-bool get_window_open_flag()
+window_t window_get_pool_flag(void)
 {
-    return window.flag_open;
+    return window_pool;
 }
 
-bool get_window_forced_flag()
+window_t window_get_it_flag(void)
 {
-    return window.flag_forced;
+   return window_it;
 }
 
-bool get_window_close_IT_flag()
+void IT_flag_window_unlock(void)
 {
-    return window.flag_close;
+    if(phase_get() == PHASE_ASCEND)
+    {
+        IT_flag_unlock = true;
+    }
 }
 
-void IT_window_close()
+void IT_flag_window_relock(void)
 {
-    set_window_close_IT_flag(true);
+    if(phase_get() == PHASE_ASCEND)
+    {
+        IT_flag_relock = true;
+    }
+}
+
+void IT_routine_window_unlock(void)
+{
+    if(IT_flag_unlock_enable == true)
+    {
+        if(phase_get() == PHASE_ASCEND)
+        {
+            window_it = w_flag_unlock;
+            IT_flag_unlock_enable = false;
+        }
+    }
+}
+
+void IT_routine_window_relock(void)
+{
+    if(IT_flag_relock_enable == true)
+    {
+        if(phase_get() == PHASE_ASCEND)
+        {
+        	window_it = w_flag_forced;
+            phase_set(PHASE_DEPLOY);
+        }
+        else
+        {
+        	window_it = w_flag_relock;
+        }
+    }
+}
+
+bool get_winU_IT_flag(void)
+{
+    return IT_flag_unlock;
+}
+
+bool get_winR_IT_flag(void)
+{
+    return IT_flag_relock;
 }

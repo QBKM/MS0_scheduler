@@ -40,7 +40,7 @@ typedef struct
 /* ------------------------------------------------------------- --
    Public prototypes
 -- ------------------------------------------------------------- */
-void            init_jack(void);
+void            jack_init(void);
 
 void 			IT_flag_jack(void);
 void 			IT_routine_jack(void);

@@ -13,7 +13,7 @@ motor_t motor;
  * @brief Init the motor struct
  * 
  */
-void init_motor(void)
+void motor_init(void)
 {
     motor.IT_flag = false;
     motor.DM_M1   = DIAG_MOTOR_OK;

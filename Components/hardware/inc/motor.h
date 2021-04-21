@@ -71,7 +71,7 @@ typedef struct
 }motor_t;
 
 
-void init_motor(void);
+void motor_init(void);
 
 void IT_flag_diag_motor();
 void IT_routine_diag_motor();
