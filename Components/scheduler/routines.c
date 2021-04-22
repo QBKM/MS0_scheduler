@@ -72,7 +72,7 @@ void routine_ascend(void)
  * ************************************************************* */
 void routine_deploy(void)
 {
-    broadcast_uart(ID_phase_deploy);
+    broadcast_uart(MSG_ID_phase_deploy);
     phase_set(PHASE_DESCEND);
 }
 

@@ -1,13 +1,13 @@
-/**
- * @file buzzer.c
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.2
- * @date 2021-04-11
+/** ************************************************************* *
+ * @file       buzzer.c
+ * @brief      
+ * 
+ * @date       2021-04-22
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
+ * ************************************************************* **/
 
 /* ------------------------------------------------------------- --
    Includes
@@ -24,10 +24,10 @@ buzzer_t buzzer;
 /* ------------------------------------------------------------- --
    Public functions
 -- ------------------------------------------------------------- */
-/**
- * @brief Init the buzzer
+/** ************************************************************* *
+ * @brief      init the buzzer
  * 
- */
+ * ************************************************************* **/
 void buzzer_init(void)
 {
     /* init the structure */
@@ -43,13 +43,12 @@ void buzzer_init(void)
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 }
 
-
-/**
- * @brief 	update the buzzer with the current time and settings. 
+/** ************************************************************* *
+ * @brief      update the buzzer with the current time and settings. 
  * 
- * @param delay 
- * @param duty_cycle 
- */
+ * @param      delay 
+ * @param      duty_cycle 
+ * ************************************************************* **/
 void buzzer_update(uint16_t delay, float duty_cycle)
 {
     /* update the values */
@@ -74,3 +73,8 @@ void buzzer_update(uint16_t delay, float duty_cycle)
         htim1.Instance->CCER &= ~(1 << 10);
     }
 }
+
+
+/* ------------------------------------------------------------- --
+   End of file
+-- ------------------------------------------------------------- */

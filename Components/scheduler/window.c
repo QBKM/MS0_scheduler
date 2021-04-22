@@ -66,7 +66,11 @@ void IT_routine_window_unlock(void)
 	IT_flag_unlock = false;
     HAL_TIM_Base_Stop(&htim3);
 
-    if(phase_get() == PHASE_ASCEND) window_it.unlock = true;
+    if(phase_get() == PHASE_ASCEND) 
+    {
+        window_it.unlock = true;
+        broadcast_uart(MSG_ID_unlock_window_IT);
+    }
 }
 
 /** ************************************************************* *
@@ -83,6 +87,7 @@ void IT_routine_window_relock(void)
     {
         window_it.relock = true;
         phase_set(PHASE_DEPLOY);
+        broadcast_uart(MSG_ID_relock_window_IT);
     }
 }
 
@@ -117,20 +122,28 @@ bool get_winR_IT_flag(void)
 bool window_check_RTC_unlock(void)
 {
     DS3231_Read_All();
-    DS3231_t curernt_time = DS3231_Get_Struct();
+    DS3231_t current_time = DS3231_Get_Struct();
 
-    if(curernt_time.Sec >= WINDOW_RELOCK_RTC)
+    /* WINDOW RELOCK */
+    if(current_time.Sec >= WINDOW_RELOCK_RTC)
     {
         if(phase_get() == PHASE_ASCEND) 
         {
             window_pool.relock = true;
+            phase_set(PHASE_DEPLOY);
+            broadcast_uart(MSG_ID_relock_window_POOL);
         }
-        phase_set(PHASE_DEPLOY);
         return false;
     }
-    else if(curernt_time.Sec >= WINDOW_UNLOCK_RTC)
+
+    /* WINDOW UNLOCK */
+    else if(current_time.Sec >= WINDOW_UNLOCK_RTC)
     {
-        window_pool.unlock = true;
+        if(window_pool.unlock == false)
+        {
+            window_pool.unlock = true;
+            broadcast_uart(MSG_ID_unlock_window_POOL);
+        }
         return true;
     }
     else

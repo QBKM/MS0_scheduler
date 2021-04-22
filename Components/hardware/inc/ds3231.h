@@ -1,13 +1,13 @@
-/**
- * @file ds3231.h
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.1
- * @date 2021-04-11
+/** ************************************************************* *
+ * @file       ds3231.h
+ * @brief      
+ * 
+ * @date       2021-04-22
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
+ * ************************************************************* **/
 
 #ifndef __DS3231_H__
 #define __DS3231_H__
@@ -95,7 +95,7 @@ uint8_t DS3231_Read_All(void);
 uint8_t DS3231_Read_Time(void);
 uint8_t DS3231_Read_Temperature(void);
 
-uint8_t DS3231_SetTime(void);
+uint8_t DS3231_Set_Time(void);
 
 
 #endif /* __DS3231_H__ */

@@ -66,7 +66,7 @@ void IT_routine_jack(void)
 
     DS3231_Init();
     
-    broadcast_uart(ID_phase_ascend);
+    broadcast_uart(MSG_ID_phase_ascend);
 	phase_set(PHASE_ASCEND);
 }
 
