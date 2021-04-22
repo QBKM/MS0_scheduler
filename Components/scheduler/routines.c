@@ -55,18 +55,10 @@ void routine_wait(void)
 void routine_ascend(void)
 {
     /* read data */
-    MPU6050_Read_All();
-    DS3231_Read_All();
-
-    /* get handler */
-    DS3231_t RTC_I2C = DS3231_Get_Struct();
+    MPU6050_Read_All_Kalman();
 
     /* Temporal window [pooling mode]*/
-    if(RTC_I2C.Sec >= 20)
-    {
-        phase_set(PHASE_DEPLOY);
-    }
-    else if(RTC_I2C.Sec >= 16)
+    if(window_check_RTC_unlock() == true)
     {
         // if apogee, => phase_set(PHASE_DEPLY)
     }
