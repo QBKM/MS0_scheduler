@@ -4,7 +4,7 @@ For more details, please contact me at : quentin.bakrim@hotmail.fr
 
 ## Target :
 - NUCLEO STM32f303k8
-- SEQ BOARD
+- SEQ BOARD (Scheduler board for MS0)
 
 ## How to use :
 This project has been generated on STMCubeIDE. 
