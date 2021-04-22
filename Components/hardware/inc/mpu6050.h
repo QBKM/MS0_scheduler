@@ -16,7 +16,9 @@
    Includes
 -- ------------------------------------------------------------- */
 #include <stdint.h>
+#include <math.h>
 #include "i2c.h"
+
 
 
 /* ------------------------------------------------------------- --
@@ -70,6 +72,18 @@ typedef enum
 /* ------------------------------------------------------------- --
    Structures
 -- ------------------------------------------------------------- */
+
+/* Kalman structure */
+typedef struct 
+{
+    double Q_angle;
+    double Q_bias;
+    double R_measure;
+    double angle;
+    double bias;
+    double P[2][2];
+} Kalman_t;
+
 /* configuration structure */
 typedef struct
 {
@@ -79,8 +93,8 @@ typedef struct
 }MPU6050_config_t;
 
 /* MPU6050 handle structure */
-typedef struct {
-
+typedef struct 
+{
     int16_t Accel_X_RAW;
     int16_t Accel_Y_RAW;
     int16_t Accel_Z_RAW;
@@ -98,19 +112,24 @@ typedef struct {
     int16_t Temperature_RAW;
     float Temperature;
 
+    double KalmanAngleX;
+    double KalmanAngleY;
+
     MPU6050_config_t config;
 
 } MPU6050_t;
 
-
 /* ------------------------------------------------------------- --
    Prototypes
 -- ------------------------------------------------------------- */
-uint8_t MPU6050_Init();
-uint8_t MPU6050_Read_Accel();
-uint8_t MPU6050_Read_Gyro();
-uint8_t MPU6050_Read_Temp();
-uint8_t MPU6050_Read_All();
+uint8_t MPU6050_Init(void);
+uint8_t MPU6050_Read_Accel(void);
+uint8_t MPU6050_Read_Gyro(void);
+uint8_t MPU6050_Read_Temp(void);
+uint8_t MPU6050_Read_All(void);
+uint8_t MPU6050_Read_All_Kalman(void);
+
+double MPU6050_Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt);
 
 
 #endif /* INC_GY521_H_ */

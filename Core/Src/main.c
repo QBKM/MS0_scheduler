@@ -92,11 +92,21 @@ int main(void)
   MX_USART1_UART_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 	
-	buzzer_init();
+  //__HAL_TIM_CLEAR_FLAG(&htim2, TIM_SR_UIF);
+  //__HAL_TIM_CLEAR_FLAG(&htim3, TIM_SR_UIF);
+
+	/* scheduler init */
+	synchro_init();
+	window_init();
 	phase_set(PHASE_WAIT);
 
+	/* hardware init */
+	buzzer_init();
+	motor_init();
+	jack_init();
     MPU6050_Init();
 	DS3231_Init();
   
@@ -104,44 +114,45 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  	while (1)
+  	{
+	  	synchro_update();
+		IT_manager();
+
+		switch(phase_get())
+		{
+			case PHASE_WAIT :
+			buzzer_update(5000, 0.05);
+			routine_wait();
+			break;
+
+			case PHASE_ASCEND :
+			buzzer_update(1000, 0.1);
+			routine_ascend();
+			break;
+
+			case PHASE_DEPLOY :
+			routine_deploy();
+			break;
+
+			case PHASE_DESCEND :
+			buzzer_update(500, 0.1);
+			routine_descend();
+			break;
+
+			case PHASE_LANDED :
+			buzzer_update(500, 0.5);
+			routine_landed();
+			break;
+
+			default :
+			break;
+		}
+
+		synchro_wait();
     /* USER CODE END WHILE */
-	synchro_update();
-	IT_manager();
 
-	switch(phase_get())
-	{
-		case PHASE_WAIT :
-		buzzer_update(5000, 0.05);
-		routine_wait();
-		break;
-
-		case PHASE_ASCEND :
-		buzzer_update(1000, 0.1);
-		routine_ascend();
-		break;
-
-		case PHASE_DEPLOY :
-		routine_deploy();
-		break;
-
-		case PHASE_DESCEND :
-		buzzer_update(500, 0.1);
-		routine_descend();
-		break;
-
-		case PHASE_LANDED :
-		buzzer_update(500, 0.5);
-		routine_landed();
-		break;
-
-		default :
-		break;
-	}
     /* USER CODE BEGIN 3 */
-
-	synchro_wait();
   }
   /* USER CODE END 3 */
 }
@@ -175,7 +186,7 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
@@ -198,7 +209,8 @@ void SystemClock_Config(void)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
-    if (htim->Instance == TIM2) phase_set(PHASE_DEPLOY);
+    if (htim->Instance == TIM2) IT_flag_window_relock();
+	if (htim->Instance == TIM3) IT_flag_window_unlock();
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -210,13 +222,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		case GPIO_PIN_6 : IT_flag_diag_motor(); break;
 		case GPIO_PIN_7 : IT_flag_diag_motor(); break;
 		case GPIO_PIN_8 : IT_flag_jack(); break;
-	
-	default: break;
+		default: break;
 	}
 }
 
 void IT_manager(void)
 {
+	if(get_winU_IT_flag()	== true) IT_routine_window_unlock();
+	if(get_winR_IT_flag()	== true) IT_routine_window_relock();
 	if(get_jack_IT_flag() 	== true) IT_routine_jack();
 	if(get_motor_IT_flag() 	== true) IT_routine_diag_motor();
 }
