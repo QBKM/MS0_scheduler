@@ -297,3 +297,7 @@ double MPU6050_Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate
 
     return Kalman->angle;
 };
+
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */

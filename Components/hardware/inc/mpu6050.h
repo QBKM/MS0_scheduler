@@ -1,13 +1,13 @@
-/**
- * @file mpu6050.h
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.2
- * @date 2021-04-11
+/** ************************************************************* *
+ * @file       mpu6050.h
+ * @brief      
+ * 
+ * @date       2021-04-23
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
+ * ************************************************************* **/
 
 #ifndef __MPU6050_H__
 #define __MPU6050_H__
@@ -19,8 +19,6 @@
 #include <math.h>
 #include "i2c.h"
 #include "config_file.h"
-
-
 
 /* ------------------------------------------------------------- --
    Defines
@@ -39,7 +37,6 @@
 #endif
 
 #define RAD_TO_DEG 					57.295779513082320876798154814105
-
 
 /* ------------------------------------------------------------- --
    Enumerates

@@ -1,13 +1,13 @@
-/**
- * @file jack.h
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.2
- * @date 2021-04-11
+/** ************************************************************* *
+ * @file       jack.h
+ * @brief      
+ * 
+ * @date       2021-04-23
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
+ * ************************************************************* **/
 
 #ifndef INC_JACK_H_
 #define INC_JACK_H_

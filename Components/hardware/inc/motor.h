@@ -1,27 +1,25 @@
-/**
- * @file motor.h
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.1
- * @date 2021-03-13
+/** ************************************************************* *
+ * @file       motor.h
+ * @brief      
+ * 
+ * @date       2021-04-23
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
-
-/*
- * motor.h
- *
- *  Created on: Mar 12, 2021
- *      Author: Quent
- */
+ * ************************************************************* **/
 
 #ifndef INC_MOTOR_H_
 #define INC_MOTOR_H_
 
+/* ------------------------------------------------------------- --
+   Includes
+-- ------------------------------------------------------------- */
 #include "stdbool.h"
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MOTOR
+/* ------------------------------------------------------------- --
+   types
+-- ------------------------------------------------------------- */
 typedef enum
 {
     DIAG_MOTOR_KO,
@@ -70,7 +68,9 @@ typedef struct
 
 }motor_t;
 
-
+/* ------------------------------------------------------------- --
+   function prototypes
+-- ------------------------------------------------------------- */
 void motor_init(void);
 
 void IT_flag_diag_motor();
@@ -82,4 +82,8 @@ void set_diag_motor_status(select_motor_t motor_ID, diag_motor_t status); 	// mo
 diag_motor_t get_diag_motor_status(select_motor_t motor_ID);		 		// idem
 
 
+
 #endif /* INC_MOTOR_H_ */
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */
