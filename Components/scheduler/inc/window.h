@@ -30,19 +30,7 @@
 #include "routines.h"
 #include "ds3231.h"
 
-/* ------------------------------------------------------------- --
-   defines
--- ------------------------------------------------------------- */
-/* Temporal windows for the parachute */
-/* +---------------------+--------------------------------+---------------------+ */
-/* | T < T0*0.9 = LOCKED | T0*0.9 < T < T0*1.1 = UNLOCKED | T > T0*1.1 = FORCED | */
-/* + --------------------+--------------------------------+---------------------+ */
-#define WINDOW_TIMEREF      17.7
-#define WINDOW_UNLOCK       15.93   /* - 10% */
-#define WINDOW_RELOCK       19.47   /* + 10% */
-
-#define WINDOW_UNLOCK_RTC   16      /* value for the double window safety with I2C RTC */
-#define WINDOW_RELOCK_RTC   20      /* value for the double window safety with I2C RTC */
+#include "config_file.h"
 
 /* ------------------------------------------------------------- --
    types

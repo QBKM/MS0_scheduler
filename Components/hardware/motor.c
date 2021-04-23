@@ -1,18 +1,31 @@
-/*
- * motor.c
- *
- *  Created on: Mar 12, 2021
- *      Author: Quent
- */
+/** ************************************************************* *
+ * @file       motor.c
+ * @brief      
+ * 
+ * @date       2021-04-23
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
+ * 
+ * Mines Space
+ * 
+ * ************************************************************* **/
 
+/* ------------------------------------------------------------- --
+   includes
+-- ------------------------------------------------------------- */
 #include "motor.h"
 
+/* ------------------------------------------------------------- --
+   variables
+-- ------------------------------------------------------------- */
 motor_t motor;
 
-/**
- * @brief Init the motor struct
+/* ------------------------------------------------------------- --
+   public functions
+-- ------------------------------------------------------------- */
+/** ************************************************************* *
+ * @brief      Init the motor struct
  * 
- */
+ * ************************************************************* **/
 void motor_init(void)
 {
     motor.IT_flag = false;
@@ -28,6 +41,10 @@ void motor_init(void)
     motor.HB_B_M2 = IN;
 }
 
+/** ************************************************************* *
+ * @brief      
+ * 
+ * ************************************************************* **/
 void IT_flag_diag_motor()
 {
     if(motor.IT_flag != true)
@@ -36,37 +53,41 @@ void IT_flag_diag_motor()
     }
 }
 
+/** ************************************************************* *
+ * @brief      
+ * 
+ * ************************************************************* **/
 void IT_routine_diag_motor()
 {
     
 }
 
-/**
- * @brief Set the motor IT flag object
+/** ************************************************************* *
+ * @brief      Set the motor IT flag object
  * 
- * @param IT_flag 
- */
+ * @param      IT_flag 
+ * ************************************************************* **/
 void set_motor_IT_flag(diag_motor_it_t IT_flag)
 {
     motor.IT_flag = IT_flag;
 }
 
-/**
- * @brief Get the motor IT flag object
+/** ************************************************************* *
+ * @brief      Get the motor IT flag object
  * 
- * @return true 
- * @return false 
- */
+ * @return     diag_motor_it_t 
+ * ************************************************************* **/
 diag_motor_it_t get_motor_IT_flag(void)
 {
     return motor.IT_flag;
 }
 
-/**
- * @brief Set the diag motor status object
+/** ************************************************************* *
+ * @brief      Set the diag motor status object
  * 
- * @param status 
- */
+ * @param      motor_ID 
+ * @param      status 
+ * ************************************************************* **/
 void set_diag_motor_status(select_motor_t motor_ID , diag_motor_t status)
 {
     switch (motor_ID)
@@ -77,11 +98,12 @@ void set_diag_motor_status(select_motor_t motor_ID , diag_motor_t status)
     }
 }
 
-/**
- * @brief Get the diag motor status object
+/** ************************************************************* *
+ * @brief      Get the diag motor status object
  * 
- * @return diag_motor_t 
- */
+ * @param      motor_ID 
+ * @return     diag_motor_t 
+ * ************************************************************* **/
 diag_motor_t get_diag_motor_status(select_motor_t motor_ID)
 {
     diag_motor_t result;
@@ -95,3 +117,7 @@ diag_motor_t get_diag_motor_status(select_motor_t motor_ID)
 
     return result;
 }
+
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */

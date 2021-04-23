@@ -20,13 +20,16 @@
 #include "stdarg.h"
 #include <stdbool.h>
 #include "i2c.h"
+#include "config_file.h"
 
 
 /* ------------------------------------------------------------- --
    Define
 -- ------------------------------------------------------------- */
 /* DS3231 address */
+#ifndef DS3231_ADDR
 #define DS3231_ADDR  (0x68 << 1)
+#endif
 
 /* DS3231 registers */
 #define DS3231_REG_TIME         0x00

@@ -1,21 +1,28 @@
-/**
- * @file routines.h
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.1
- * @date 2021-04-11
+/** ************************************************************* *
+ * @file       routines.h
+ * @brief      
+ * 
+ * @date       2021-04-23
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
+ * ************************************************************* **/
 
 #ifndef INC_ROUTINES_H_
 #define INC_ROUTINES_H_
 
+/* ------------------------------------------------------------- --
+   includes
+-- ------------------------------------------------------------- */
 #include "i2c.h"
 #include "mpu6050.h"
 #include "ds3231.h"
+#include "broadcast.h"
 
+/* ------------------------------------------------------------- --
+   types
+-- ------------------------------------------------------------- */
 typedef enum
 {
   PHASE_WAIT,
@@ -25,6 +32,9 @@ typedef enum
   PHASE_LANDED
 }phase_t;
 
+/* ------------------------------------------------------------- --
+   function protoypes
+-- ------------------------------------------------------------- */
 void phase_set(phase_t NewPhase);
 phase_t phase_get(void);
 
@@ -34,4 +44,8 @@ void routine_deploy(void);
 void routine_descend(void);
 void routine_landed(void);
 
+
 #endif /* INC_ROUTINES_H_ */
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */

@@ -15,24 +15,27 @@
    includes
 -- ------------------------------------------------------------- */
 #include "stdint.h"
+#include "config_file.h"
 
 /* ------------------------------------------------------------- --
    constant
 -- ------------------------------------------------------------- */
+#ifndef TIMEOUT_UART
 #define TIMEOUT_UART 10
+#endif
 
 /* phases ID */
-const uint8_t MSG_ID_phase_wait      = 0xA1;
-const uint8_t MSG_ID_phase_ascend    = 0xA2;
-const uint8_t MSG_ID_phase_deploy    = 0xA3;
-const uint8_t MSG_ID_phase_descend   = 0xA4;
-const uint8_t MSG_ID_phase_landed    = 0xA5;
+#define MSG_ID_phase_wait           (uint8_t)0xA1
+#define MSG_ID_phase_ascend         (uint8_t)0xA2
+#define MSG_ID_phase_deploy         (uint8_t)0xA3
+#define MSG_ID_phase_descend        (uint8_t)0xA4
+#define MSG_ID_phase_landed         (uint8_t)0xA5
 
 /* temporal window ID */
-const uint8_t MSG_ID_unlock_window_IT    = 0xF1;
-const uint8_t MSG_ID_unlock_window_POOL  = 0xF2;
-const uint8_t MSG_ID_relock_window_IT    = 0xF3;
-const uint8_t MSG_ID_relock_window_POOL  = 0xF4;
+#define MSG_ID_unlock_window_IT     (uint8_t)0xF1
+#define MSG_ID_unlock_window_POOL   (uint8_t)0xF2
+#define MSG_ID_relock_window_IT     (uint8_t)0xF3
+#define MSG_ID_relock_window_POOL   (uint8_t)0xF4
 
 /* ------------------------------------------------------------- --
    Public protoypes
