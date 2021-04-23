@@ -15,6 +15,7 @@
 #include "i2c.h"
 #include "mpu6050.h"
 #include "ds3231.h"
+#include "broadcast.h"
 
 typedef enum
 {

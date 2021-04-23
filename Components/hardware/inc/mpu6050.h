@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include <math.h>
 #include "i2c.h"
+#include "config_file.h"
 
 
 
@@ -33,7 +34,9 @@
 #define MPU6050_GYRO_CONFIG_REG 	0x1B
 #define MPU6050_GYRO_XOUT_H_REG 	0x43
 
-#define MPU6050_ADDR 				0x69 << 1 	/* ( << 1 because of the R/W bit */
+#ifndef MPU6050_ADDR
+#define MPU6050_ADDR 				(0x69 << 1) 	/* ( << 1 because of the R/W bit */
+#endif
 
 #define RAD_TO_DEG 					57.295779513082320876798154814105
 

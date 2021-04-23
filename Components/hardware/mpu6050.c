@@ -13,7 +13,7 @@
    Includes
 -- ------------------------------------------------------------- */
 #include "mpu6050.h"
-#include "constants.h"
+#include "config_file.h"
 
 #ifndef TIMEOUT_I2C
 #define TIMEOUT_I2C 10

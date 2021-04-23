@@ -11,8 +11,11 @@
 
 #include "synchro.h"
 #include "stdint.h"
+#include "config_file.h"
 
+#ifndef SYNC_DELAY
 #define SYNC_DELAY  10 /* ms */
+#endif
 
 synchro_t synchro;
 uint32_t duration;

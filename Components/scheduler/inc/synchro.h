@@ -14,6 +14,7 @@
 
 #include "stdint.h"
 #include "stm32f3xx_hal.h"
+#include "config_file.h"
 
 typedef struct synchro_t
 {
