@@ -1,13 +1,13 @@
-/**
- * @file mpu6050.c
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.1
- * @date 2021-04-11
+/** ************************************************************* *
+ * @file        mpu6050.c
+ * @brief       
+ * 
+ * @date        2021-04-24
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
+ * ************************************************************* **/
 
 /* ------------------------------------------------------------- --
    Includes
@@ -63,12 +63,11 @@ const double Gyro_X_Y_Z_corrector = 16.4;
 /* ------------------------------------------------------------- --
    Functions
 -- ------------------------------------------------------------- */
-/* ************************************************************* *
- * @name		MPU6050_Init
- * @brief		initialize the mpu6050
- *
- * @args
- * ************************************************************* */
+/** ************************************************************* *
+ * @brief       init the MPU6050
+ * 
+ * @return      uint8_t 
+ * ************************************************************* **/
 uint8_t MPU6050_Init(void) {
     uint8_t check;
     uint8_t data;
@@ -82,8 +81,6 @@ uint8_t MPU6050_Init(void) {
     MPU6050.Gx = 0.0;
     MPU6050.Gy = 0.0;
     MPU6050.Gz = 0.0;
-
-
 
     /* Structure to configure the MPU6050 */
     MPU6050_config_t config =
@@ -121,12 +118,11 @@ uint8_t MPU6050_Init(void) {
 }
 
 
-/* ************************************************************* *
- * @name		MPU6050_Read_Accel
- * @brief		read the acceleration data
- *
- * @args
- * ************************************************************* */
+/** ************************************************************* *
+ * @brief       read the accel data
+ * 
+ * @return      uint8_t 
+ * ************************************************************* **/
 uint8_t MPU6050_Read_Accel(void)
 {
     uint8_t data[6];
@@ -147,12 +143,11 @@ uint8_t MPU6050_Read_Accel(void)
 }
 
 
-/* ************************************************************* *
- * @name		MPU6050_Read_Gyro
- * @brief		read the gyroscope data
- *
- * @args
- * ************************************************************* */
+/** ************************************************************* *
+ * @brief       read the gyro data
+ * 
+ * @return      uint8_t 
+ * ************************************************************* **/
 uint8_t MPU6050_Read_Gyro(void)
 {
     uint8_t data[6];
@@ -172,12 +167,11 @@ uint8_t MPU6050_Read_Gyro(void)
     return HAL_OK;
 }
 
-/* ************************************************************* *
- * @name		MPU6050_Read_Temp
- * @brief		read the temperature data
- *
- * @args
- * ************************************************************* */
+/** ************************************************************* *
+ * @brief       read the temperature
+ * 
+ * @return      uint8_t 
+ * ************************************************************* **/
 uint8_t MPU6050_Read_Temp(void)
 {
     uint8_t data[2];
@@ -193,12 +187,11 @@ uint8_t MPU6050_Read_Temp(void)
 }
 
 
-/* ************************************************************* *
- * @name		MPU6050_Read_All
- * @brief		read all the data
- *
- * @args
- * ************************************************************* */
+/** ************************************************************* *
+ * @brief       read all
+ * 
+ * @return      uint8_t 
+ * ************************************************************* **/
 uint8_t MPU6050_Read_All(void)
 {
     uint8_t data[14];
@@ -235,6 +228,11 @@ uint8_t MPU6050_Read_All(void)
     return HAL_OK;
 }
 
+/** ************************************************************* *
+ * @brief       read all and apply the kalman filter to the result
+ * 
+ * @return      uint8_t 
+ * ************************************************************* **/
 uint8_t MPU6050_Read_All_Kalman(void)
 {
     MPU6050_Read_All();
@@ -264,12 +262,16 @@ uint8_t MPU6050_Read_All_Kalman(void)
     return HAL_OK;
 }
 
-/* ************************************************************* *
- * @name		MPU6050_Kalman_getAngle
- * @brief		return the Kalman angle
- *
- * @args
- * ************************************************************* */
+/** ************************************************************* *
+ * @brief       apply the kalman filter with the input args and
+ *              return the angle
+ * 
+ * @param       Kalman 
+ * @param       newAngle 
+ * @param       newRate 
+ * @param       dt 
+ * @return      double 
+ * ************************************************************* **/
 double MPU6050_Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt) 
 {
     double rate = newRate - Kalman->bias;

@@ -49,6 +49,8 @@ void            set_jack_status(jack_status_t jack_status);
 jack_status_t   get_jack_status(void);
 
 
-
-
 #endif /* INC_JACK_H_ */
+
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */
