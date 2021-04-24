@@ -13,7 +13,8 @@
    includes
 -- ------------------------------------------------------------- */
 #include "synchro.h"
-#include "stdint.h"
+#include "stm32f3xx_hal.h"
+#include "config_file.h"
 #include "config_file.h"
 
 /* ------------------------------------------------------------- --

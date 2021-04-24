@@ -18,9 +18,6 @@
 #include "stdint.h"
 #include "stdbool.h"
 
-#include "routines.h"
-#include "tim.h"
-
 /* ------------------------------------------------------------- --
    Types
 -- ------------------------------------------------------------- */
@@ -52,6 +49,8 @@ void            set_jack_status(jack_status_t jack_status);
 jack_status_t   get_jack_status(void);
 
 
-
-
 #endif /* INC_JACK_H_ */
+
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */

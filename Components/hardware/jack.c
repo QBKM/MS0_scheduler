@@ -1,18 +1,24 @@
-/**
- * @file jack.c
- * @author Quentin Bakrim (quentin.bakrim@hotmail.fr)
- * @brief 
- * @version 0.2
- * @date 2021-04-11
+/** ************************************************************* *
+ * @file        jack.c
+ * @brief       
+ * 
+ * @date        2021-04-24
+ * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
- */
+ * ************************************************************* **/
 
 /* ------------------------------------------------------------- --
    Includes
 -- ------------------------------------------------------------- */
 #include "jack.h"
+#include "routines.h"
+#include "ds3231.h"
+
+#include "tim.h"
+
+#include "broadcast.h"
 
 /* ------------------------------------------------------------- --
    Types
@@ -22,10 +28,10 @@ jack_t jack;
 /* ------------------------------------------------------------- --
    Public functions
 -- ------------------------------------------------------------- */
-/**
- * @brief init the jack
+/** ************************************************************* *
+ * @brief       init the jack struct
  * 
- */
+ * ************************************************************* **/
 void jack_init(void)
 {
     jack_t temp =
@@ -36,11 +42,10 @@ void jack_init(void)
     jack = temp;
 }
 
-/**
- * @brief Manage the jack IT flag
+/** ************************************************************* *
+ * @brief     Manage the jack IT flag  
  * 
- * @param phase 
- */
+ * ************************************************************* **/
 void IT_flag_jack(void)
 {
 	if((jack.IT_flag == false) && (phase_get() == PHASE_WAIT))
@@ -49,10 +54,10 @@ void IT_flag_jack(void)
 	}
 } 
 
-/**
- * @brief Construct a new it routine jack object
+/** ************************************************************* *
+ * @brief       Construct a new it routine jack object
  * 
- */
+ * ************************************************************* **/
 void IT_routine_jack(void)
 {
     jack.IT_flag		= false;
@@ -70,43 +75,47 @@ void IT_routine_jack(void)
 	phase_set(PHASE_ASCEND);
 }
 
-/**
- * @brief Set the jack IT flag object
+/** ************************************************************* *
+ * @brief       Set the jack IT flag object
  * 
- * @param IT_flag 
- */
+ * @param       IT_flag 
+ * ************************************************************* **/
 void set_jack_IT_flag(bool IT_flag)
 {
     jack.IT_flag = IT_flag;
 }
 
-/**
- * @brief Get the jack IT flag object
+/** ************************************************************* *
+ * @brief       Get the jack IT flag object
  * 
- * @return true 
- * @return false 
- */
+ * @return      true 
+ * @return      false 
+ * ************************************************************* **/
 bool get_jack_IT_flag(void)
 {
     return jack.IT_flag;
 }
 
-/**
- * @brief Get the jack status object
+/** ************************************************************* *
+ * @brief       Get the jack status object
  * 
- * @return jack_status_t 
- */
+ * @return      jack_status_t 
+ * ************************************************************* **/
 jack_status_t get_jack_status(void)
 {
     return jack.jack_status;
 }
 
-/**
- * @brief Set the jack status object
+/** ************************************************************* *
+ * @brief       Set the jack status object
  * 
- * @param jack_status 
- */
+ * @param       jack_status 
+ * ************************************************************* **/
 void set_jack_status(jack_status_t jack_status)
 {
     jack.jack_status = jack_status;
 }
+
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */

@@ -15,14 +15,10 @@
    includes
 -- ------------------------------------------------------------- */
 #include "stdint.h"
-#include "config_file.h"
 
 /* ------------------------------------------------------------- --
    constant
 -- ------------------------------------------------------------- */
-#ifndef TIMEOUT_UART
-#define TIMEOUT_UART 10
-#endif
 
 /* phases ID */
 #define MSG_ID_phase_wait           (uint8_t)0xA1
