@@ -1,28 +1,41 @@
 /** ************************************************************* *
- * @file       routines.c
+ * @file        routines.c
  * @brief      
  * 
- * @date       2021-04-24
- * @author     Quentin Bakrim (quentin.bakrim@hotmail.fr)
+ * @date        2021-04-24
+ * @author      Quentin Bakrim (quentin.bakrim@hotmail.fr)
  * 
  * Mines Space
  * 
  * ************************************************************* **/
 
-#include "stdbool.h"
+/* ------------------------------------------------------------- --
+   includes
+-- ------------------------------------------------------------- */
 #include "routines.h"
+
+#include "stdbool.h"
+
+#include "window.h"
+
 #include "i2c.h"
 #include "mpu6050.h"
 #include "ds3231.h"
-#include "window.h"
+
 #include "broadcast.h"
 
+/* ------------------------------------------------------------- --
+   variables
+-- ------------------------------------------------------------- */
 phase_t phase;
 
+/* ------------------------------------------------------------- --
+   functions
+-- ------------------------------------------------------------- */
 /** ************************************************************* *
- * @brief      
+ * @brief       Change the phase for the scheduler
  * 
- * @param      NewPhase 
+ * @param       NewPhase 
  * ************************************************************* **/
 void phase_set(phase_t NewPhase)
 {
@@ -30,9 +43,9 @@ void phase_set(phase_t NewPhase)
 }
 
 /** ************************************************************* *
- * @brief      
+ * @brief       return the current phase used by the scheduler
  * 
- * @return     phase_t 
+ * @return      phase_t 
  * ************************************************************* **/
 phase_t phase_get(void)
 {
@@ -40,16 +53,17 @@ phase_t phase_get(void)
 }
 
 /** ************************************************************* *
- * @brief      
+ * @brief       initial phase for the scheduler
  * 
  * ************************************************************* **/
 void routine_wait(void)
 {
-    MPU6050_Read_All_Kalman();
+    
 }
 
 /** ************************************************************* *
- * @brief      
+ * @brief       second phase for the scheduler. this phase is 
+ *              set by removing the jack connector
  * 
  * ************************************************************* **/
 void routine_ascend(void)
@@ -65,7 +79,9 @@ void routine_ascend(void)
 }
 
 /** ************************************************************* *
- * @brief      
+ * @brief       third phase for the scheduler. this phase is 
+ *              set by reaching the apogee or by timeout the 
+ *              temporal window
  * 
  * ************************************************************* **/
 void routine_deploy(void)
@@ -75,7 +91,8 @@ void routine_deploy(void)
 }
 
 /** ************************************************************* *
- * @brief      
+ * @brief       forth phase for the scheduler. this phase is 
+ *              set just after leaving the apogee phase
  * 
  * ************************************************************* **/
 void routine_descend(void)
@@ -85,10 +102,15 @@ void routine_descend(void)
 }
 
 /** ************************************************************* *
- * @brief      
+ * @brief       fifth phase for the scheduler. this phase is 
+ *              set by landing on the floor (final phase)
  * 
  * ************************************************************* **/
 void routine_landed(void)
 {
 	
 }
+
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */
