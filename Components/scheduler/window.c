@@ -12,6 +12,12 @@
    includes
 -- ------------------------------------------------------------- */
 #include "window.h"
+#include "tim.h"
+#include "routines.h"
+#include "ds3231.h"
+#include "broadcast.h"
+
+#include "config_file.h"
 
 /* ------------------------------------------------------------- --
    variables

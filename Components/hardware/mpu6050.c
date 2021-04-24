@@ -14,6 +14,8 @@
 -- ------------------------------------------------------------- */
 #include "mpu6050.h"
 #include "config_file.h"
+#include <math.h>
+#include "i2c.h"
 
 #ifndef TIMEOUT_I2C
 #define TIMEOUT_I2C 10

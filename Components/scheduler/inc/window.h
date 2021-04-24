@@ -22,15 +22,6 @@
 -- ------------------------------------------------------------- */
 #include "stdbool.h"
 #include "stdint.h"
-#include "stdio.h"
-
-#include "stm32f3xx_hal.h"
-#include "tim.h"
-
-#include "routines.h"
-#include "ds3231.h"
-
-#include "config_file.h"
 
 /* ------------------------------------------------------------- --
    types

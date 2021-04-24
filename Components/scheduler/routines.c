@@ -9,7 +9,13 @@
  * 
  */
 
+#include "stdbool.h"
 #include "routines.h"
+#include "i2c.h"
+#include "mpu6050.h"
+#include "ds3231.h"
+#include "window.h"
+#include "broadcast.h"
 
 phase_t phase;
 

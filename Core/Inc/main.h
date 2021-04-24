@@ -32,34 +32,11 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stdio.h"
-#include "stdarg.h"
-#include "stdint.h"
-#include "stdbool.h"
-#include "string.h"
-
-#include "jack.h"
-#include "motor.h"
-#include "window.h"
-#include "buzzer.h"
-#include "routines.h"
-#include "broadcast.h"
-#include "synchro.h"
-
-#include "mpu6050.h"
-#include "ds3231.h"
 
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
-
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SCHEDULER
-
-
 
 /* USER CODE END ET */
 
