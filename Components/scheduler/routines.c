@@ -98,7 +98,7 @@ void routine_deploy(void)
 void routine_descend(void)
 {
     /* read data MPU6050 */
-    MPU6050_Read_All();
+	MPU6050_Read_All_Kalman();
 }
 
 /** ************************************************************* *
