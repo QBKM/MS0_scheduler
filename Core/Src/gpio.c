@@ -48,7 +48,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(RST_DS3231_GPIO_Port, RST_DS3231_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(RST_DS3231_GPIO_Port, RST_DS3231_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, IN_A_M1_Pin|IN_B_M1_Pin|IN_A_M2_Pin|IN_B_M2_Pin
