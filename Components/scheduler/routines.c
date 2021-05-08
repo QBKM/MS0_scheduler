@@ -24,6 +24,9 @@
 
 #include "broadcast.h"
 
+//////////////////
+#include "gpio.h"
+
 /* ------------------------------------------------------------- --
    variables
 -- ------------------------------------------------------------- */
@@ -88,6 +91,15 @@ void routine_deploy(void)
 {
     broadcast_uart(MSG_ID_phase_deploy);
     phase_set(PHASE_DESCEND);
+
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, 0);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, 1);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, 0);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, 1);
+
+
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, 1);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, 1);
 }
 
 /** ************************************************************* *
@@ -98,7 +110,7 @@ void routine_deploy(void)
 void routine_descend(void)
 {
     /* read data MPU6050 */
-    MPU6050_Read_All();
+	MPU6050_Read_All_Kalman();
 }
 
 /** ************************************************************* *

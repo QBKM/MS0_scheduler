@@ -13,6 +13,7 @@
    includes
 -- ------------------------------------------------------------- */
 #include "motor.h"
+#include "gpio.h"
 
 /* ------------------------------------------------------------- --
    variables
@@ -35,10 +36,10 @@ void motor_init(void)
     motor.CS_M1 = CURRENT_SENSING_OK;
     motor.CS_M2 = CURRENT_SENSING_OK;
 
-    motor.HB_A_M1 = IN;
-    motor.HB_B_M1 = IN;
-    motor.HB_A_M2 = IN;
-    motor.HB_B_M2 = IN;
+    motor.HB_A_M1 = OUT;
+    motor.HB_B_M1 = OUT;
+    motor.HB_A_M2 = OUT;
+    motor.HB_B_M2 = OUT;
 }
 
 /** ************************************************************* *
