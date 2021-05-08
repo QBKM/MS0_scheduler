@@ -120,7 +120,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   	while (1)
   	{
-	  	synchro_update();
+		synchro_update();
 		IT_manager();
 
 		switch(phase_get())
