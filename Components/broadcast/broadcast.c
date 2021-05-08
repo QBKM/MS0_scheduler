@@ -25,21 +25,36 @@
 #define TIMEOUT_UART 10
 #endif
 
+/* uart peripheral */
+#define HUART  huart1
+
 /* ------------------------------------------------------------- --
    variables
 -- ------------------------------------------------------------- */
-char MSG[10];
+char OUT_MSG[1];
+char IN_MSG[1];
 
-/* ------------------------------------------------------------- --
-   Public functions
--- ------------------------------------------------------------- */
+/* ============================================================= ==
+   public functions
+== ============================================================= */
 /** ************************************************************* *
  * @brief      send on uart a short ID for other boards
  * 
  * @param      message 
  * ************************************************************* **/
-void broadcast_uart(const uint8_t message)
+void broadcast_uart_send(const uint8_t message)
 {
-	sprintf(MSG, "%c", message);
-    HAL_UART_Transmit(&huart1, (uint8_t*)MSG, strlen(MSG), TIMEOUT_UART);
+	sprintf(OUT_MSG, "%c", message);
+   HAL_UART_Transmit(&HUART, (uint8_t*)OUT_MSG, strlen(OUT_MSG), TIMEOUT_UART);
+}
+
+/** ************************************************************* *
+ * @brief       receive on uart a short ID from other boards
+ * 
+ * @param       message 
+ * ************************************************************* **/
+uint8_t broadcast_uart_receive(void)
+{
+   HAL_UART_Receive_IT(&HUART, IN_MSG, sizeof(IN_MSG));
+   return (uint8_t)IN_MSG[0];
 }
