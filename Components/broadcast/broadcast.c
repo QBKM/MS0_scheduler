@@ -31,8 +31,8 @@
 /* ------------------------------------------------------------- --
    variables
 -- ------------------------------------------------------------- */
-char OUT_MSG[1];
-char IN_MSG[1];
+char OUT_MSG[10];
+char IN_MSG[10];
 
 /* ============================================================= ==
    public functions
@@ -55,6 +55,6 @@ void broadcast_uart_send(const uint8_t message)
  * ************************************************************* **/
 uint8_t broadcast_uart_receive(void)
 {
-   HAL_UART_Receive_IT(&HUART, IN_MSG, sizeof(IN_MSG));
+   HAL_UART_Receive_IT(&HUART, (uint8_t*)IN_MSG, sizeof(IN_MSG));
    return (uint8_t)IN_MSG[0];
 }
