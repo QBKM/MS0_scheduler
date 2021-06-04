@@ -94,6 +94,8 @@ void RECSYS_set_Adc(uint8_t select, bool status);
 void RECSYS_get_Pin(void);
 void RECSYS_get_Sys(void);
 
+void IT_flag_Analog_WD(uint8_t select);
+
 RECSYS_t RECSYS_Get_Struct(void);
 
 #endif

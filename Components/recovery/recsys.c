@@ -223,3 +223,27 @@ void RECSYS_set_Adc(uint8_t select, bool status)
     }
 }
 
+#ifndef RECSYS_NO_ADC
+/** ************************************************************* *
+ * @brief       
+ * 
+ * ************************************************************* **/
+void IT_flag_Analog_WD(uint8_t select)
+{
+    switch (select)
+    {
+    case RECSYS_M1:
+        RECSYS.ADC.M1 = true;   
+        //hadc->Instance &= ~(1<<7);
+        break;
+    case RECSYS_M2:
+        RECSYS.ADC.M2 = true;
+        //hadc->Instance &= ~(1<<8);
+        break;
+    default:
+        break;
+    }
+
+    RECSYS.ADC.GLOBAL   = true;
+}
+#endif
