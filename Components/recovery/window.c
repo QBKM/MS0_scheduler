@@ -75,7 +75,7 @@ void IT_routine_window_unlock(void)
     if(phase_get() == PHASE_ASCEND) 
     {
         window_it.unlock = true;
-        broadcast_uart(MSG_ID_unlock_window_IT);
+        broadcast_uart_send(MSG_ID_unlock_window_IT);
     }
 }
 
@@ -93,7 +93,7 @@ void IT_routine_window_relock(void)
     {
         window_it.relock = true;
         phase_set(PHASE_DEPLOY);
-        broadcast_uart(MSG_ID_relock_window_IT);
+        broadcast_uart_send(MSG_ID_relock_window_IT);
     }
 }
 
@@ -137,7 +137,7 @@ bool window_check_RTC_unlock(void)
         {
             window_pool.relock = true;
             phase_set(PHASE_DEPLOY);
-            broadcast_uart(MSG_ID_relock_window_POOL);
+            broadcast_uart_send(MSG_ID_relock_window_POOL);
         }
         return false;
     }
@@ -148,7 +148,7 @@ bool window_check_RTC_unlock(void)
         if(window_pool.unlock == false)
         {
             window_pool.unlock = true;
-            broadcast_uart(MSG_ID_unlock_window_POOL);
+            broadcast_uart_send(MSG_ID_unlock_window_POOL);
         }
         return true;
     }

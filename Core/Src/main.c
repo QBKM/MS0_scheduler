@@ -1,25 +1,18 @@
 /* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
+/** ************************************************************* *
+ * @file        main.c
+ * @brief       
+ * 
+ * @date        2021-05-16
+ * @author      Quentin Bakrim (quentin.bakrim@hotmail.fr)
+ * 
+ * Mines Space
+ * 
+ * ************************************************************* **/
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -27,16 +20,31 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+/* ------------------------------------------------------------- --
+	user includes
+-- ------------------------------------------------------------- */
+/* HW scheduler */
 #include "jack.h"
 #include "motor.h"
-#include "window.h"
 #include "buzzer.h"
-#include "routines.h"
-#include "broadcast.h"
-#include "synchro.h"
-
 #include "mpu6050.h"
 #include "ds3231.h"
+
+/* SW scheduler */
+#include "window.h"
+#include "synchro.h"
+#include "routines.h"
+
+/* broadcast */
+#include "broadcast.h"
+
+/* recovery system */
+#include "recsys.h"
+
+/* configuration */
+#include "config_file.h"
+
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -94,7 +102,6 @@ int main(void)
   MX_TIM2_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_ADC1_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
@@ -105,7 +112,6 @@ int main(void)
 	/* scheduler init */
 	synchro_init();
 	window_init();
-	phase_set(PHASE_WAIT);
 
 	/* hardware init */
 	buzzer_init();
@@ -113,6 +119,11 @@ int main(void)
 	jack_init();
 	MPU6050_Init();
 	DS3231_Init();
+
+	/* set the scheduler in wait status */
+	HAL_Delay(1000);
+	phase_set(PHASE_WAIT);
+	broadcast_uart_send(MSG_ID_phase_wait);
   
   /* USER CODE END 2 */
 
@@ -120,18 +131,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   	while (1)
   	{
-	  	synchro_update();
+		/* get new time reference for synchro */
+		synchro_update();
+
+		/* manage the IT received during the last cycle */
 		IT_manager();
 
+		/* select the scheduled routine */
 		switch(phase_get())
 		{
 			case PHASE_WAIT :
-			buzzer_update(5000, 0.05);
+			buzzer_update(BUZZER_WAIT_DELAY, BUZZER_WAIT_RATIO);
 			routine_wait();
 			break;
 
 			case PHASE_ASCEND :
-			buzzer_update(1000, 0.1);
+			buzzer_update(BUZZER_ASCEND_DELAY, BUZZER_ASCEND_RATIO);
 			routine_ascend();
 			break;
 
@@ -140,12 +155,12 @@ int main(void)
 			break;
 
 			case PHASE_DESCEND :
-			buzzer_update(500, 0.1);
+			buzzer_update(BUZZER_DESCEND_DELAY, BUZZER_DESCEND_RATIO);
 			routine_descend();
 			break;
 
 			case PHASE_LANDED :
-			buzzer_update(500, 0.5);
+			buzzer_update(BUZZER_LANDED_DELAY, BUZZER_LANDED_RATIO);
 			routine_landed();
 			break;
 
@@ -153,7 +168,9 @@ int main(void)
 			break;
 		}
 
+		/* wait the synchro time */
 		synchro_wait();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -177,9 +194,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL4;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -198,9 +213,8 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_I2C1
-                              |RCC_PERIPHCLK_TIM1|RCC_PERIPHCLK_ADC12;
+                              |RCC_PERIPHCLK_TIM1;
   PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
-  PeriphClkInit.Adc12ClockSelection = RCC_ADC12PLLCLK_DIV1;
   PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
   PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLK_HCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
@@ -211,12 +225,24 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+/** ************************************************************* *
+ * @brief       the timer IT callback manager is trigged by the
+ * 				timer IT and set the associated flag to true
+ * 
+ * @param       htim 
+ * ************************************************************* **/
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
     if (htim->Instance == TIM2) IT_flag_window_relock();
 	if (htim->Instance == TIM3) IT_flag_window_unlock();
 }
 
+/** ************************************************************* *
+ * @brief       the GPIO IT callback manager is trigged by the
+ * 				GPIO IT and set the associated flag to true
+ * 
+ * @param       GPIO_Pin 
+ * ************************************************************* **/
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	switch (GPIO_Pin)
@@ -230,6 +256,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
+
+/** ************************************************************* *
+ * @brief       the IT manager check the IT flag and launch 
+ * 				the functions associated
+ * 
+ * ************************************************************* **/
 void IT_manager(void)
 {
 	if(get_winU_IT_flag()	== true) IT_routine_window_unlock();

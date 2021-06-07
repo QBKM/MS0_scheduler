@@ -46,3 +46,28 @@
 
 /* DS3231 */
 #define DS3231_ADDR     	(0x68 << 1)		/* ( << 1 because of the R/W bit */
+
+/* BUZZER */
+#define BUZZER_WAIT_DELAY       5000        /* [ms] time between 2 buzzer cycle */
+#define BUZZER_WAIT_RATIO       0.05        /* [%]  percentage of signal in the cycle */
+
+#define BUZZER_ASCEND_DELAY     1000        /* [ms] time between 2 buzzer cycle */
+#define BUZZER_ASCEND_RATIO     0.1         /* [%]  percentage of signal in the cycle */
+
+#define BUZZER_DESCEND_DELAY    500         /* [ms] time between 2 buzzer cycle */
+#define BUZZER_DESCEND_RATIO    0.1         /* [%]  percentage of signal in the cycle */
+
+#define BUZZER_LANDED_DELAY     500         /* [ms] time between 2 buzzer cycle */
+#define BUZZER_LANDED_RATIO     0.5         /* [%]  percentage of signal in the cycle */
+
+
+/**************************************************************** *
+ * 	RECOVERY SYSTEM
+ **************************************************************** */
+
+
+/**************************************************************** *
+ * 	BROADCAST
+ **************************************************************** */
+/* DELAY */
+#define BROADCAST_WAIT_PHASE_DELAY  1000    /* [ms] time between 2 messages sent */

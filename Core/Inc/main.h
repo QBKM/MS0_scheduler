@@ -82,10 +82,6 @@ void Error_Handler(void);
 #define Diag_B_M2_Pin GPIO_PIN_7
 #define Diag_B_M2_GPIO_Port GPIOA
 #define Diag_B_M2_EXTI_IRQn EXTI9_5_IRQn
-#define CURRENT_SENS_M1_Pin GPIO_PIN_0
-#define CURRENT_SENS_M1_GPIO_Port GPIOB
-#define CURRENT_SENS_M2_Pin GPIO_PIN_1
-#define CURRENT_SENS_M2_GPIO_Port GPIOB
 #define Jack_Pin GPIO_PIN_8
 #define Jack_GPIO_Port GPIOA
 #define Jack_EXTI_IRQn EXTI9_5_IRQn
