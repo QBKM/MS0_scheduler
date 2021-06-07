@@ -64,8 +64,7 @@
 /**************************************************************** *
  * 	RECOVERY SYSTEM
  **************************************************************** */
-#define RECSYS_REVERSE_DELAY    500         /* [ms] time to reverse the motor */
-#define RECSYS_NO_ADC                       /* Bypass the ADC IT from threshold */
+
 
 /**************************************************************** *
  * 	BROADCAST

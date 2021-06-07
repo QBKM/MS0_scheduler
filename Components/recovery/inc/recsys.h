@@ -89,13 +89,12 @@ void RECSYS_Stop(uint8_t select);
 
 void RECSYS_set_Pin(uint8_t select, STATUS_t status);
 void RECSYS_set_Sys(uint8_t select, STATUS_t status);
-void RECSYS_set_Adc(uint8_t select, bool status);
 
-void RECSYS_get_Pin(void);
-void RECSYS_get_Sys(void);
-
-void IT_flag_Analog_WD(uint8_t select);
+PIN_STATUS_t RECSYS_get_Pin(void);
+SYS_STATUS_t RECSYS_get_Sys(void);
 
 RECSYS_t RECSYS_Get_Struct(void);
+
+void RECSYS_button_mngr(void);
 
 #endif

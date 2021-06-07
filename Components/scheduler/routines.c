@@ -90,6 +90,8 @@ void routine_wait(void)
         broadcast_uart_send(PHASE_WAIT);
     }
 
+    RECSYS_button_mngr();
+
     routines.cycles.wait  += 1;
     routines.cycles.total += 1;
 }
@@ -139,7 +141,22 @@ void routine_deploy(void)
         RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
         RECSYS_Start(RECSYS_M1 | RECSYS_M2);
     }
-    
+
+    routines.cycles.deploy += 1;
+    routines.cycles.total  += 1;
+}
+
+/** ************************************************************* *
+ * @brief       forth phase for the scheduler. this phase is 
+ *              set just after leaving the apogee phase
+ * 
+ * ************************************************************* **/
+void routine_descend(void)
+{
+    /* read data MPU6050 */
+	MPU6050_Read_All_Kalman();
+
+    /* read recovery struct */
     RECSYS_t RECOVERY = RECSYS_Get_Struct();
 
     /* reading the motor sensor */
@@ -159,31 +176,10 @@ void routine_deploy(void)
     {
         RECSYS_set_Sys(RECSYS_GLOBAL, UNLOCKED);
         broadcast_uart_send(MSG_ID_recsys_unlocked);
-        phase_set(PHASE_DESCEND);
     }
 
-    routines.cycles.deploy += 1;
-    routines.cycles.total  += 1;
-}
-
-/** ************************************************************* *
- * @brief       forth phase for the scheduler. this phase is 
- *              set just after leaving the apogee phase
- * 
- * ************************************************************* **/
-void routine_descend(void)
-{
-    /* read data MPU6050 */
-	MPU6050_Read_All_Kalman();
-
-    //MPU6050_t IMU = MPU6050_Get_Struct();
-    //if(IMU.Az >= ????????????)
-    //{
-    //    phase_set(PHASE_DEPLOY);
-    //}
-
     routines.cycles.descend += 1;
-    routines.cycles.total   +=1;
+    routines.cycles.total   += 1;
 }
 
 /** ************************************************************* *
@@ -194,7 +190,7 @@ void routine_descend(void)
 void routine_landed(void)
 {
 	routines.cycles.landed += 1;
-    routines.cycles.total  +=1;
+    routines.cycles.total  += 1;
 }
 
 

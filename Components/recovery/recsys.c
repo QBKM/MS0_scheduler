@@ -209,41 +209,54 @@ void RECSYS_set_Pin(uint8_t select, STATUS_t status)
 /** ************************************************************* *
  * @brief       
  * 
- * @param       select 
- * @param       status 
+ * @return      PIN_STATUS_t 
  * ************************************************************* **/
-void RECSYS_set_Adc(uint8_t select, bool status)
+PIN_STATUS_t RECSYS_get_Pin(void)
 {
-    switch (select)
-    {
-    case RECSYS_M1:     RECSYS.ADC.M1       = status;   break;
-    case RECSYS_M2:     RECSYS.ADC.M2       = status;   break;
-    case RECSYS_GLOBAL: RECSYS.ADC.GLOBAL   = status;   break;
-    default:                                            break;
-    }
+    return RECSYS.PIN;
 }
 
-#ifndef RECSYS_NO_ADC
 /** ************************************************************* *
  * @brief       
  * 
+ * @return      SYS_STATUS_t 
  * ************************************************************* **/
-void IT_flag_Analog_WD(uint8_t select)
+SYS_STATUS_t RECSYS_get_Sys(void)
 {
-    switch (select)
+    return RECSYS.SYS;
+}
+
+/** ************************************************************* *
+ * @brief       open or close the recovery system with the buttons
+ * 
+ * ************************************************************* **/
+void RECSYS_button_mngr(void)
+{
+    TCA6408A_t TCA = TCA6408A_Get_Struct();
+
+    /* check button 1 */
+    if((TCA.PIN_state) & (TCA6408A_PIN6))
     {
-    case RECSYS_M1:
-        RECSYS.ADC.M1 = true;   
-        //hadc->Instance &= ~(1<<7);
-        break;
-    case RECSYS_M2:
-        RECSYS.ADC.M2 = true;
-        //hadc->Instance &= ~(1<<8);
-        break;
-    default:
-        break;
+        RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
+        RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+    }
+    else
+    {
+        RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
     }
 
-    RECSYS.ADC.GLOBAL   = true;
+    /* check button 2 */
+    if((TCA.PIN_state) & (TCA6408A_PIN7))
+    {
+        RECSYS_Lock(RECSYS_M1 | RECSYS_M2);
+        RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+    }
+    else
+    {
+        RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+    }
 }
-#endif
+
+/* ------------------------------------------------------------- --
+   end of file
+-- ------------------------------------------------------------- */
