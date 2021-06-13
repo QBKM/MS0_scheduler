@@ -15,32 +15,7 @@
    includes
 -- ------------------------------------------------------------- */
 #include "stdint.h"
-
-/* ------------------------------------------------------------- --
-   constant
--- ------------------------------------------------------------- */
-
-/* phases ID */
-#define MSG_ID_phase_wait           (uint8_t)0xA1
-#define MSG_ID_phase_ascend         (uint8_t)0xA2
-#define MSG_ID_phase_deploy         (uint8_t)0xA3
-#define MSG_ID_phase_descend        (uint8_t)0xA4
-#define MSG_ID_phase_landed         (uint8_t)0xA5
-
-/* recovery system ID */
-#define MSG_ID_recsys_unlocked      (uint8_t)0xB1
-#define MSG_ID_recsys_unlocking     (uint8_t)0xB2
-#define MSG_ID_recsys_locked        (uint8_t)0xB3
-#define MSG_ID_recsys_locking       (uint8_t)0xB4
-#define MSG_ID_recsys_reverse       (uint8_t)0xB5
-#define MSG_ID_recsys_start_motor   (uint8_t)0xB6
-#define MSG_ID_recsys_stop_motor    (uint8_t)0xB7
-
-/* temporal window ID */
-#define MSG_ID_unlock_window_IT     (uint8_t)0xF1
-#define MSG_ID_unlock_window_POOL   (uint8_t)0xF2
-#define MSG_ID_relock_window_IT     (uint8_t)0xF3
-#define MSG_ID_relock_window_POOL   (uint8_t)0xF4
+#include "msg_list.h"
 
 /* ------------------------------------------------------------- --
    Public protoypes
