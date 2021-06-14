@@ -80,6 +80,7 @@ typedef struct
    function prototypes
 -- ------------------------------------------------------------- */
 void RECSYS_Init(void);
+void RECSYS_Update(void);
 
 void RECSYS_Lock(uint8_t select);
 void RECSYS_Unlock(uint8_t select);
