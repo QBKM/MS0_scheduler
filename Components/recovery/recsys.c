@@ -19,10 +19,13 @@
 #include "config_file.h"
 
 /* GPIO extender pins link */
-#define PIN_LOCK_M1     TCA6408A_PIN0
-#define PIN_UNLOCK_M1   TCA6408A_PIN1
-#define PIN_LOCK_M2     TCA6408A_PIN2
-#define PIN_UNLOCK_M2   TCA6408A_PIN3
+#define PIN_LOCK_M1     TCA6408A_PIN1
+#define PIN_UNLOCK_M1   TCA6408A_PIN2
+#define PIN_LOCK_M2     TCA6408A_PIN3
+#define PIN_UNLOCK_M2   TCA6408A_PIN4
+
+#define PIN_LOCK_USER   TCA6408A_PIN5
+#define PIN_UNLOCK_USER TCA6408A_PIN6
 
 
 
@@ -60,9 +63,7 @@ void RECSYS_Init(void)
     RECSYS.ADC = temp_adc;
 
     TCA6408A_Init();
-    TCA6408A_Set_Mode((PIN_LOCK_M1 | PIN_UNLOCK_M1 | PIN_LOCK_M2 | PIN_UNLOCK_M2), TCA_INPUT);
-
-    TCA6408A_Read_Pin_All();
+    TCA6408A_Set_Mode((PIN_LOCK_M1 | PIN_UNLOCK_M1 | PIN_LOCK_M2 | PIN_UNLOCK_M2 | PIN_LOCK_USER | PIN_UNLOCK_USER), TCA_INPUT);
     
     RECSYS_Update();
 }
@@ -76,13 +77,13 @@ void RECSYS_Update(void)
 	TCA6408A_Read_Pin_All();
     TCA6408A_t TCA = TCA6408A_Get_Struct();
 
-    if(~TCA.PIN_state & 1/*PIN_LOCK_M1*/)
+    if(~TCA.PIN_state & PIN_LOCK_M1)
     {   
         RECSYS.PIN.CFDC_LOCK_M1 = LOW;
         RECSYS.SYS.M1           = LOCKED; 
     }
 
-    if( ~TCA.PIN_state & 2/*PIN_UNLOCK_M1*/)
+    if( ~TCA.PIN_state & PIN_UNLOCK_M1)
     {
         RECSYS.PIN.CFDC_UNLOCK_M1   = LOW;
         RECSYS.SYS.M1               = UNLOCKED; 
@@ -248,12 +249,13 @@ SYS_STATUS_t RECSYS_get_Sys(void)
  * @brief       open or close the recovery system with the buttons
  * 
  * ************************************************************* **/
-void RECSYS_button_mngr(void)
+void RECSYS_user_button(void)
 {
+    TCA6408A_Read_Pin_All();
     TCA6408A_t TCA = TCA6408A_Get_Struct();
 
     /* check button 1 */
-    if((TCA.PIN_state) & (TCA6408A_PIN5))
+    if((~TCA.PIN_state) & (TCA6408A_PIN5))
     {
         RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
         RECSYS_Start(RECSYS_M1 | RECSYS_M2);
@@ -264,7 +266,7 @@ void RECSYS_button_mngr(void)
     }
 
     /* check button 2 */
-    if((TCA.PIN_state) & (TCA6408A_PIN6))
+    if((~TCA.PIN_state) & (TCA6408A_PIN6))
     {
         RECSYS_Lock(RECSYS_M1 | RECSYS_M2);
         RECSYS_Start(RECSYS_M1 | RECSYS_M2);

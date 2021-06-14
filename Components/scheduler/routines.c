@@ -90,7 +90,7 @@ void routine_wait(void)
         broadcast_uart_send(MSG_ID_phase_wait);
     }
 
-    RECSYS_button_mngr();
+    RECSYS_user_button();
 
     routines.cycles.wait  += 1;
     routines.cycles.total += 1;

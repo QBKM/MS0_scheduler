@@ -96,6 +96,6 @@ SYS_STATUS_t RECSYS_get_Sys(void);
 
 RECSYS_t RECSYS_Get_Struct(void);
 
-void RECSYS_button_mngr(void);
+void RECSYS_user_button(void);
 
 #endif
