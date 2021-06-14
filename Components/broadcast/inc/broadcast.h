@@ -21,7 +21,7 @@
    Public protoypes
 -- ------------------------------------------------------------- */
 void     broadcast_uart_send(const uint8_t message);
-uint8_t  broadcast_uart_receive(void);
+
 
 #endif /* BROADCAST_INC_BROADCAST_H_ */
 /* ------------------------------------------------------------- --
