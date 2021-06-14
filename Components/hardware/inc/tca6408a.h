@@ -22,14 +22,14 @@
    defines
 -- ------------------------------------------------------------- */
 /* TCA6408A masks */
-#define TCA6408A_PIN0                   0x01
-#define TCA6408A_PIN1                   0x02
-#define TCA6408A_PIN2                   0x04
-#define TCA6408A_PIN3                   0x08
-#define TCA6408A_PIN4                   0x10
-#define TCA6408A_PIN5                   0x20
-#define TCA6408A_PIN6                   0x40
-#define TCA6408A_PIN7                   0x80
+#define TCA6408A_PIN0                   0x00
+#define TCA6408A_PIN1                   0x01
+#define TCA6408A_PIN2                   0x02
+#define TCA6408A_PIN3                   0x04
+#define TCA6408A_PIN4                   0x08
+#define TCA6408A_PIN5                   0x10
+#define TCA6408A_PIN6                   0x20
+#define TCA6408A_PIN7                   0x40
 
 
 /* ------------------------------------------------------------- --
