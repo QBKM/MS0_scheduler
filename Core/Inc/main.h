@@ -70,18 +70,6 @@ void Error_Handler(void);
 #define IN_A_M2_GPIO_Port GPIOA
 #define IN_B_M2_Pin GPIO_PIN_3
 #define IN_B_M2_GPIO_Port GPIOA
-#define Diag_A_M1_Pin GPIO_PIN_4
-#define Diag_A_M1_GPIO_Port GPIOA
-#define Diag_A_M1_EXTI_IRQn EXTI4_IRQn
-#define Diag_B_M1_Pin GPIO_PIN_5
-#define Diag_B_M1_GPIO_Port GPIOA
-#define Diag_B_M1_EXTI_IRQn EXTI9_5_IRQn
-#define Diag_A_M2_Pin GPIO_PIN_6
-#define Diag_A_M2_GPIO_Port GPIOA
-#define Diag_A_M2_EXTI_IRQn EXTI9_5_IRQn
-#define Diag_B_M2_Pin GPIO_PIN_7
-#define Diag_B_M2_GPIO_Port GPIOA
-#define Diag_B_M2_EXTI_IRQn EXTI9_5_IRQn
 #define Jack_Pin GPIO_PIN_8
 #define Jack_GPIO_Port GPIOA
 #define Jack_EXTI_IRQn EXTI9_5_IRQn
@@ -95,10 +83,10 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define LED_green_Pin GPIO_PIN_3
 #define LED_green_GPIO_Port GPIOB
-#define MONITORING_ALIM_SEQ_Pin GPIO_PIN_4
-#define MONITORING_ALIM_SEQ_GPIO_Port GPIOB
-#define MONITORING_ALIM_MOTOR_Pin GPIO_PIN_5
+#define MONITORING_ALIM_MOTOR_Pin GPIO_PIN_4
 #define MONITORING_ALIM_MOTOR_GPIO_Port GPIOB
+#define MONITORING_ALIM_SEQ_Pin GPIO_PIN_5
+#define MONITORING_ALIM_SEQ_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
