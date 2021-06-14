@@ -29,6 +29,7 @@
 #include "buzzer.h"
 #include "mpu6050.h"
 #include "ds3231.h"
+#include "alim.h"
 
 /* SW scheduler */
 #include "window.h"
@@ -115,15 +116,77 @@ int main(void)
 
 	/* hardware init */
 	buzzer_init();
-	motor_init();
+	//motor_init();
 	jack_init();
 	MPU6050_Init();
 	DS3231_Init();
+	RECSYS_Init();
 
 	/* set the scheduler in wait status */
 	HAL_Delay(1000);
 	phase_set(PHASE_WAIT);
 	broadcast_uart_send(MSG_ID_phase_wait);
+	ALIM_check_all();
+
+
+
+	//////////////// temp
+	uint8_t res = 0;
+
+//  while(1)
+//  {
+//	  RECSYS_t RECSYS;
+//
+//		RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+//		RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
+//		RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+//
+//    do
+//    {
+//      RECSYS_Update();
+//      RECSYS = RECSYS_Get_Struct();
+//
+//    } while (RECSYS.SYS.M1 != LOCKED);
+//    
+//
+//    RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+//		RECSYS_Lock(RECSYS_M1 | RECSYS_M2);
+//	  RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+//      
+//    do
+//    {
+//      RECSYS_Update();
+//      RECSYS = RECSYS_Get_Struct();
+//
+//    } while (RECSYS.SYS.M1 != UNLOCKED);
+
+//		RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+//		RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
+//		RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+//
+//    RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+//		RECSYS_Lock(RECSYS_M1 | RECSYS_M2);
+//	  RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+//
+//    RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+
+//      RECSYS_t RECSYS;
+//      RECSYS_Update();
+//      RECSYS = RECSYS_Get_Struct();
+//    }
+
+//		HAL_Delay(4000);
+
+
+
+//	  HAL_Delay(4000);
+
+//		RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+
+
+  
+//  phase_set(PHASE_ASCEND);
+	///////////////:
   
   /* USER CODE END 2 */
 
@@ -245,15 +308,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
  * ************************************************************* **/
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	switch (GPIO_Pin)
-	{
-		case GPIO_PIN_4 : IT_flag_diag_motor(); break;
-		case GPIO_PIN_5 : IT_flag_diag_motor(); break;
-		case GPIO_PIN_6 : IT_flag_diag_motor(); break;
-		case GPIO_PIN_7 : IT_flag_diag_motor(); break;
-		case GPIO_PIN_8 : IT_flag_jack(); break;
-		default: break;
-	}
+	if(GPIO_Pin == Jack_Pin) IT_flag_jack();
 }
 
 
@@ -267,7 +322,6 @@ void IT_manager(void)
 	if(get_winU_IT_flag()	== true) IT_routine_window_unlock();
 	if(get_winR_IT_flag()	== true) IT_routine_window_relock();
 	if(get_jack_IT_flag() 	== true) IT_routine_jack();
-	if(get_motor_IT_flag() 	== true) IT_routine_diag_motor();
 }
 
 /* USER CODE END 4 */
