@@ -131,7 +131,7 @@ int main(void)
 
 
 	//////////////// temp
-	uint8_t res = 0;
+//	uint8_t res = 0;
 
 //  while(1)
 //  {

@@ -15,6 +15,7 @@
 #include "tca6408a.h"
 
 #include "gpio.h"
+#include "tim.h"
 
 #include "config_file.h"
 
@@ -64,6 +65,15 @@ void RECSYS_Init(void)
 
     TCA6408A_Init();
     TCA6408A_Set_Mode((PIN_LOCK_M1 | PIN_UNLOCK_M1 | PIN_LOCK_M2 | PIN_UNLOCK_M2 | PIN_LOCK_USER | PIN_UNLOCK_USER), TCA_INPUT);
+
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+
+    /* disable pwm channel 1 */
+    htim1.Instance->CCER &= ~(1 << 2);
+
+    /* disable pwm channel 2 */
+    htim1.Instance->CCER &= ~(1 << 6);
     
     RECSYS_Update();
 }
@@ -158,15 +168,19 @@ void  RECSYS_Start(uint8_t select)
 {
     if(select & RECSYS_M1)
     {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, HIGH);
+        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, HIGH);
+        htim1.Instance->CCR1 = 1999;
+        htim1.Instance->CCER |= (1 << 2);
     }
     if(select & RECSYS_M2)
     {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, HIGH);
+        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, HIGH);
+        htim1.Instance->CCR2 = 1999;
+        htim1.Instance->CCER |= (1 << 6);
     }
 }
 
@@ -178,15 +192,20 @@ void RECSYS_Stop(uint8_t select)
 {
     if(select & RECSYS_M1)
     {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, LOW);
+        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, LOW);
+        htim1.Instance->CCR1 = 0;
+        htim1.Instance->CCER &= ~(1 << 2);
+        
     }
     if(select & RECSYS_M2)
     {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, LOW);
+        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, LOW);
+        htim1.Instance->CCR2 = 0;
+        htim1.Instance->CCER &= ~(1 << 6);
     }
 }
 
@@ -259,10 +278,18 @@ void RECSYS_user_button(void)
     {
         RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
         RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+        
+        htim1.Instance->CCR1 = 666;
+        htim1.Instance->CCR2 = 666;
+        
+        htim1.Instance->CCER |= (1 << 2);
+        htim1.Instance->CCER |= (1 << 6);
     }
     else
     {
         RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+        htim1.Instance->CCER &= ~(1 << 2);
+        htim1.Instance->CCER &= ~(1 << 6);
     }
 
     /* check button 2 */
@@ -270,10 +297,18 @@ void RECSYS_user_button(void)
     {
         RECSYS_Lock(RECSYS_M1 | RECSYS_M2);
         RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+
+        htim1.Instance->CCR1 = 666;
+        htim1.Instance->CCR2 = 666;
+
+        htim1.Instance->CCER |= (1 << 2);
+        htim1.Instance->CCER |= (1 << 6);
     }
     else
     {
         RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
+        htim1.Instance->CCER &= ~(1 << 2);
+        htim1.Instance->CCER &= ~(1 << 6);
     }
 }
 

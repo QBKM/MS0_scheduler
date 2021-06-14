@@ -73,10 +73,10 @@ void Error_Handler(void);
 #define Jack_Pin GPIO_PIN_8
 #define Jack_GPIO_Port GPIOA
 #define Jack_EXTI_IRQn EXTI9_5_IRQn
-#define ENABLE_M1_Pin GPIO_PIN_11
-#define ENABLE_M1_GPIO_Port GPIOA
-#define ENABLE_M2_Pin GPIO_PIN_12
-#define ENABLE_M2_GPIO_Port GPIOA
+#define PWM_M1_Pin GPIO_PIN_11
+#define PWM_M1_GPIO_Port GPIOA
+#define PWM_M2_Pin GPIO_PIN_12
+#define PWM_M2_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
