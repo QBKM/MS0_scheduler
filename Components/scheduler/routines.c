@@ -87,7 +87,7 @@ void routine_wait(void)
     if(HAL_GetTick() >= (time_sync + BROADCAST_WAIT_PHASE_DELAY))
     {
         time_sync = HAL_GetTick();
-        broadcast_uart_send(PHASE_WAIT);
+        broadcast_uart_send(MSG_ID_phase_wait);
     }
 
     RECSYS_button_mngr();
@@ -131,16 +131,14 @@ void routine_ascend(void)
  * ************************************************************* **/
 void routine_deploy(void)
 {
-    // first cycle tasks
-    if(routines.cycles.deploy == 0)
-    {
-	    broadcast_uart_send(MSG_ID_phase_deploy);
-        broadcast_uart_send(MSG_ID_recsys_unlocking); 
-        broadcast_uart_send(MSG_ID_recsys_start_motor);
+	broadcast_uart_send(MSG_ID_phase_deploy);
+	broadcast_uart_send(MSG_ID_recsys_unlocking);
+	broadcast_uart_send(MSG_ID_recsys_start_motor);
 
-        RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
-        RECSYS_Start(RECSYS_M1 | RECSYS_M2);
-    }
+	RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
+	RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+
+	phase_set(PHASE_DESCEND);
 
     routines.cycles.deploy += 1;
     routines.cycles.total  += 1;
@@ -157,6 +155,7 @@ void routine_descend(void)
 	MPU6050_Read_All_Kalman();
 
     /* read recovery struct */
+    RECSYS_Update();
     RECSYS_t RECOVERY = RECSYS_Get_Struct();
 
     /* reading the motor sensor */
