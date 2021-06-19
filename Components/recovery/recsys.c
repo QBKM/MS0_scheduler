@@ -11,8 +11,8 @@
 
 #include "recsys.h"
 
-#include "motor.h"
 #include "tca6408a.h"
+#include "broadcast.h"
 
 #include "gpio.h"
 #include "tim.h"
@@ -134,11 +134,13 @@ void RECSYS_Lock(uint8_t select)
     { 
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, HIGH);
+        htim1.Instance->CCR1 = 1333;
     }
     if(select & RECSYS_M2)
     {
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, HIGH);
+        htim1.Instance->CCR2 = 1333;
     }
 }   
 
@@ -152,11 +154,13 @@ void RECSYS_Unlock(uint8_t select)
     { 
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, LOW);
+        htim1.Instance->CCR1 = 1;
     }
     if(select & RECSYS_M2)
     {
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, LOW);
+        htim1.Instance->CCR2 = 1;
     }
 }
 
@@ -171,7 +175,6 @@ void  RECSYS_Start(uint8_t select)
         //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, HIGH);
-        htim1.Instance->CCR1 = 1999;
         htim1.Instance->CCER |= (1 << 2);
     }
     if(select & RECSYS_M2)
@@ -179,7 +182,6 @@ void  RECSYS_Start(uint8_t select)
         //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, HIGH);
-        htim1.Instance->CCR2 = 1999;
         htim1.Instance->CCER |= (1 << 6);
     }
 }
@@ -195,7 +197,7 @@ void RECSYS_Stop(uint8_t select)
         //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, LOW);
-        htim1.Instance->CCR1 = 0;
+        htim1.Instance->CCR1 = 1999;
         htim1.Instance->CCER &= ~(1 << 2);
         
     }
@@ -204,7 +206,7 @@ void RECSYS_Stop(uint8_t select)
         //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, LOW);
-        htim1.Instance->CCR2 = 0;
+        htim1.Instance->CCR2 = 1999;
         htim1.Instance->CCER &= ~(1 << 6);
     }
 }
@@ -276,39 +278,87 @@ void RECSYS_user_button(void)
     /* check button 1 */
     if((~TCA.PIN_state) & (TCA6408A_PIN5))
     {
-        RECSYS_Unlock(RECSYS_M1 | RECSYS_M2);
-        RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+    	if(((~TCA.PIN_state) & (TCA6408A_PIN2)))
+    	{
+    		RECSYS_Stop(RECSYS_M1);
+    	}
+    	else
+    	{
+    		RECSYS_Unlock(RECSYS_M1);
+    		htim1.Instance->CCR1 = 1333;
+    		RECSYS_Start(RECSYS_M1);
+
+    	}
         
-        htim1.Instance->CCR1 = 666;
-        htim1.Instance->CCR2 = 666;
-        
-        htim1.Instance->CCER |= (1 << 2);
-        htim1.Instance->CCER |= (1 << 6);
-    }
-    else
-    {
-        RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
-        htim1.Instance->CCER &= ~(1 << 2);
-        htim1.Instance->CCER &= ~(1 << 6);
+    	if(((~TCA.PIN_state) & (TCA6408A_PIN4)))
+    	{
+    		RECSYS_Stop(RECSYS_M2);
+    	}
+    	else
+    	{
+    		RECSYS_Unlock(RECSYS_M2);
+    		htim1.Instance->CCR2 = 1333;
+    		RECSYS_Start(RECSYS_M2);
+    	}
     }
 
     /* check button 2 */
-    if((~TCA.PIN_state) & (TCA6408A_PIN6))
+    else if((~TCA.PIN_state) & (TCA6408A_PIN6))
     {
-        RECSYS_Lock(RECSYS_M1 | RECSYS_M2);
-        RECSYS_Start(RECSYS_M1 | RECSYS_M2);
+    	if(((~TCA.PIN_state) & (TCA6408A_PIN1)))
+    	{
+    		RECSYS_Stop(RECSYS_M1);
+    	}
+    	else
+    	{
+    		RECSYS_Lock(RECSYS_M1);
+    		htim1.Instance->CCR1 = 1333;
+    		RECSYS_Start(RECSYS_M1);
+    	}
 
-        htim1.Instance->CCR1 = 666;
-        htim1.Instance->CCR2 = 666;
-
-        htim1.Instance->CCER |= (1 << 2);
-        htim1.Instance->CCER |= (1 << 6);
+    	if(((~TCA.PIN_state) & (TCA6408A_PIN3)))
+    	{
+    		RECSYS_Stop(RECSYS_M2);
+    	}
+    	else
+    	{
+    		RECSYS_Lock(RECSYS_M2);
+    		htim1.Instance->CCR2 = 1333;
+        	RECSYS_Start(RECSYS_M2);
+    	}
     }
     else
     {
         RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
-        htim1.Instance->CCER &= ~(1 << 2);
-        htim1.Instance->CCER &= ~(1 << 6);
+    }
+}
+
+/** ************************************************************* *
+ * @brief       
+ * 
+ * ************************************************************* **/
+void RECSYS_check_unlocked(void)
+{
+    TCA6408A_Read_Pin_All();
+    TCA6408A_t TCA = TCA6408A_Get_Struct();
+
+    /* check button 1 */
+    if(((~TCA.PIN_state) & (TCA6408A_PIN2)))
+    {
+    	RECSYS_Stop(RECSYS_M1);
+        RECSYS_set_Sys(RECSYS_M1, UNLOCKED);
+    }
+    
+    if(((~TCA.PIN_state) & (TCA6408A_PIN4)))
+    {
+    	RECSYS_Stop(RECSYS_M2);
+        RECSYS_set_Sys(RECSYS_M2, UNLOCKED);
+    }
+
+    if((RECSYS.SYS.M1 == UNLOCKED) && (RECSYS.SYS.M2 == UNLOCKED))
+    {
+        RECSYS_set_Sys(RECSYS_GLOBAL, UNLOCKED);
+        broadcast_uart_send(MSG_ID_recsys_unlocked);
     }
 }
 

@@ -25,6 +25,7 @@
 #include "broadcast.h"
 
 #include "recsys.h"
+#include "tca6408a.h"
 
 #include "config_file.h"
 
@@ -155,27 +156,29 @@ void routine_descend(void)
 	MPU6050_Read_All_Kalman();
 
     /* read recovery struct */
-    RECSYS_Update();
-    RECSYS_t RECOVERY = RECSYS_Get_Struct();
+    //RECSYS_Update();
+    //RECSYS_t RECOVERY = RECSYS_Get_Struct();
 
-    /* reading the motor sensor */
-    if(RECOVERY.PIN.CFDC_UNLOCK_M1 == HIGH)
-    {
-        RECSYS_set_Sys(RECSYS_M1, UNLOCKED);
-        RECSYS_Stop(RECSYS_M1);
-    }
-    
-    if(RECOVERY.PIN.CFDC_UNLOCK_M2 == HIGH)
-    {
-        RECSYS_set_Sys(RECSYS_M2, UNLOCKED);
-        RECSYS_Stop(RECSYS_M2);
-    }
+//    /* reading the motor sensor */
+//    if((RECOVERY.PIN.CFDC_UNLOCK_M1 == HIGH) && (RECOVERY.SYS.M1 != UNLOCKED))
+//    {
+//        RECSYS_set_Sys(RECSYS_M1, UNLOCKED);
+//        RECSYS_Stop(RECSYS_M1);
+//    }
+//    
+//    if((RECOVERY.PIN.CFDC_UNLOCK_M2 == HIGH) && (RECOVERY.SYS.M2 != UNLOCKED))
+//    {
+//        RECSYS_set_Sys(RECSYS_M2, UNLOCKED);
+//        RECSYS_Stop(RECSYS_M2);
+//    }
+//
+//    if((RECOVERY.SYS.M1 == UNLOCKED) && (RECOVERY.SYS.M2 == UNLOCKED) && (RECOVERY.SYS.GLOBAL != UNLOCKED))
+//    {
+//        RECSYS_set_Sys(RECSYS_GLOBAL, UNLOCKED);
+//        broadcast_uart_send(MSG_ID_recsys_unlocked);
+//    }
 
-    if((RECOVERY.SYS.M1 == UNLOCKED) && (RECOVERY.SYS.M2 == UNLOCKED))
-    {
-        RECSYS_set_Sys(RECSYS_GLOBAL, UNLOCKED);
-        broadcast_uart_send(MSG_ID_recsys_unlocked);
-    }
+    RECSYS_check_unlocked();
 
     routines.cycles.descend += 1;
     routines.cycles.total   += 1;
