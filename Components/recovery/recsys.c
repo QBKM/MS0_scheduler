@@ -55,13 +55,6 @@ void RECSYS_Init(void)
     };
     RECSYS.SYS = temp_sys;
 
-    ADC_STATUS_t temp_adc =
-    {
-        .M1     = false,
-        .M2     = false,
-        .GLOBAL = false
-    };
-    RECSYS.ADC = temp_adc;
 
     TCA6408A_Init();
     TCA6408A_Set_Mode((PIN_LOCK_M1 | PIN_UNLOCK_M1 | PIN_LOCK_M2 | PIN_UNLOCK_M2 | PIN_LOCK_USER | PIN_UNLOCK_USER), TCA_INPUT);
@@ -134,13 +127,13 @@ void RECSYS_Lock(uint8_t select)
     { 
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, HIGH);
-        htim1.Instance->CCR1 = 1333;
+        htim1.Instance->CCR1 = 199; // 200 = 10% of 2000 -> speed motor at 90% 
     }
     if(select & RECSYS_M2)
     {
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, HIGH);
-        htim1.Instance->CCR2 = 1333;
+        htim1.Instance->CCR2 = 199; // 200 = 10% of 2000 -> speed motor at 90% 
     }
 }   
 
@@ -154,13 +147,13 @@ void RECSYS_Unlock(uint8_t select)
     { 
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, LOW);
-        htim1.Instance->CCR1 = 1;
+        htim1.Instance->CCR1 = 199; // 200 = 10% of 2000 -> speed motor at 90% 
     }
     if(select & RECSYS_M2)
     {
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, HIGH);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, LOW);
-        htim1.Instance->CCR2 = 1;
+        htim1.Instance->CCR2 = 199; // 200 = 10% of 2000 -> speed motor at 90% 
     }
 }
 
@@ -197,7 +190,7 @@ void RECSYS_Stop(uint8_t select)
         //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, LOW);
-        htim1.Instance->CCR1 = 1999;
+        htim1.Instance->CCR1 = 1999; // 2000 = 100% of 2000 -> speed motor at 0% 
         htim1.Instance->CCER &= ~(1 << 2);
         
     }
@@ -206,7 +199,7 @@ void RECSYS_Stop(uint8_t select)
         //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, LOW);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, LOW);
-        htim1.Instance->CCR2 = 1999;
+        htim1.Instance->CCR2 = 1999; // 2000 = 100% of 2000 -> speed motor at 0% 
         htim1.Instance->CCER &= ~(1 << 6);
     }
 }
@@ -285,9 +278,7 @@ void RECSYS_user_button(void)
     	else
     	{
     		RECSYS_Unlock(RECSYS_M1);
-    		htim1.Instance->CCR1 = 1333;
     		RECSYS_Start(RECSYS_M1);
-
     	}
         
     	if(((~TCA.PIN_state) & (TCA6408A_PIN4)))
@@ -297,7 +288,6 @@ void RECSYS_user_button(void)
     	else
     	{
     		RECSYS_Unlock(RECSYS_M2);
-    		htim1.Instance->CCR2 = 1333;
     		RECSYS_Start(RECSYS_M2);
     	}
     }
@@ -312,7 +302,6 @@ void RECSYS_user_button(void)
     	else
     	{
     		RECSYS_Lock(RECSYS_M1);
-    		htim1.Instance->CCR1 = 1333;
     		RECSYS_Start(RECSYS_M1);
     	}
 
@@ -323,7 +312,6 @@ void RECSYS_user_button(void)
     	else
     	{
     		RECSYS_Lock(RECSYS_M2);
-    		htim1.Instance->CCR2 = 1333;
         	RECSYS_Start(RECSYS_M2);
     	}
     }
@@ -349,6 +337,7 @@ void RECSYS_check_unlocked(void)
         RECSYS_set_Sys(RECSYS_M1, UNLOCKED);
     }
     
+    /* check button 2 */
     if(((~TCA.PIN_state) & (TCA6408A_PIN4)))
     {
     	RECSYS_Stop(RECSYS_M2);
@@ -362,6 +351,38 @@ void RECSYS_check_unlocked(void)
     }
 }
 
+
+/** ************************************************************* *
+ * @brief       
+ * 
+ * ************************************************************* **/
+uint8_t RECSYS_check_locked(void)
+{
+    TCA6408A_Read_Pin_All();
+    TCA6408A_t TCA = TCA6408A_Get_Struct();
+    uint8_t check = 0;
+
+    if(((~TCA.PIN_state) & (TCA6408A_PIN1)))
+    {
+    	RECSYS_Stop(RECSYS_M1);
+        check |= 0x01;
+    }
+    else
+    {
+    	RECSYS_Lock(RECSYS_M1);
+    	RECSYS_Start(RECSYS_M1);
+    }
+    if(((~TCA.PIN_state) & (TCA6408A_PIN3)))
+    {
+    	RECSYS_Stop(RECSYS_M2);
+        check |= 0x02;
+    }
+    else
+    {
+    	RECSYS_Lock(RECSYS_M2);
+       	RECSYS_Start(RECSYS_M2);
+    }
+}
 /* ------------------------------------------------------------- --
    end of file
 -- ------------------------------------------------------------- */

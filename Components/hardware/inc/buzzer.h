@@ -18,22 +18,10 @@
 #include "stdint.h"
 
 /* ------------------------------------------------------------- --
-   Types
--- ------------------------------------------------------------- */
-typedef struct buzzer_t
-{
-	uint32_t    start_time;
-   uint32_t    current_time;
-   uint8_t     duty_cycle;
-}buzzer_t;
-
-/* ------------------------------------------------------------- --
    Public prototypes
 -- ------------------------------------------------------------- */
 void buzzer_init(void);
 void buzzer_update(uint16_t delay, float duty_cycle);
-
-
 
 #endif /* INC_BUZZER_H_ */
 /* ------------------------------------------------------------- --

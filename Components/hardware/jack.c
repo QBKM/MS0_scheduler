@@ -16,12 +16,22 @@
 #include "routines.h"
 #include "ds3231.h"
 
+#include "gpio.h"
 #include "tim.h"
 
 #include "broadcast.h"
 
 /* ------------------------------------------------------------- --
    Types
+-- ------------------------------------------------------------- */
+typedef struct 
+{
+	volatile bool	IT_flag;
+	jack_status_t 	jack_status;
+}jack_t;
+
+/* ------------------------------------------------------------- --
+   variables
 -- ------------------------------------------------------------- */
 jack_t jack;
 
@@ -50,7 +60,10 @@ void IT_flag_jack(void)
 {
 	if((jack.IT_flag == false) && (phase_get() == PHASE_WAIT))
 	{
-		jack.IT_flag = true;
+        if(HAL_GPIO_ReadPin(GPIOA, Jack_Pin) != GPIO_PIN_SET)
+        {
+		    jack.IT_flag = true;
+        }
 	}
 } 
 
@@ -60,19 +73,41 @@ void IT_flag_jack(void)
  * ************************************************************* **/
 void IT_routine_jack(void)
 {
-    jack.IT_flag		= false;
-    jack.jack_status 	= true;
-    
-    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_SR_UIF);
-    HAL_TIM_Base_Start_IT(&htim2);
+    if(HAL_GPIO_ReadPin(GPIOA, Jack_Pin) != GPIO_PIN_SET)
+    {
+        HAL_Delay(10);
+        if(HAL_GPIO_ReadPin(GPIOA, Jack_Pin) != GPIO_PIN_SET)
+        {
+            HAL_Delay(10);
+            if(HAL_GPIO_ReadPin(GPIOA, Jack_Pin) != GPIO_PIN_SET)
+            {
+                HAL_Delay(10);
+                if(HAL_GPIO_ReadPin(GPIOA, Jack_Pin) != GPIO_PIN_SET)
+                {
+                    HAL_Delay(10);
+                    if(HAL_GPIO_ReadPin(GPIOA, Jack_Pin) != GPIO_PIN_SET)
+                    {
+                        jack.IT_flag		= false;
+                        jack.jack_status 	= true;
 
-    __HAL_TIM_CLEAR_FLAG(&htim3, TIM_SR_UIF);
-    HAL_TIM_Base_Start_IT(&htim3);
+                        __HAL_TIM_CLEAR_FLAG(&htim2, TIM_SR_UIF);
+                        HAL_TIM_Base_Start_IT(&htim2);
 
-    DS3231_Init();
-    
-    broadcast_uart_send(MSG_ID_phase_ascend);
-	phase_set(PHASE_ASCEND);
+                        __HAL_TIM_CLEAR_FLAG(&htim3, TIM_SR_UIF);
+                        HAL_TIM_Base_Start_IT(&htim3);
+
+                        TIM1->ARR *= 10;
+
+                        DS3231_Init();
+
+                        broadcast_uart_send(MSG_ID_HW_jack_unplugged);
+                        broadcast_uart_send(MSG_ID_phase_ascend);
+	                    phase_set(PHASE_ASCEND);
+                    }
+                }
+            }
+        }
+    }
 }
 
 /** ************************************************************* *

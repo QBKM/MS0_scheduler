@@ -22,7 +22,7 @@
 /* ------------------------------------------------------------- --
    variables
 -- ------------------------------------------------------------- */
-window_t window_pool;
+window_t window_poll;
 window_t window_it;
 
 bool IT_flag_unlock;
@@ -37,8 +37,8 @@ bool IT_flag_relock;
  * ************************************************************* **/
 void window_init(void)
 {
-    window_pool.unlock = false;
-    window_pool.relock = false;
+    window_poll.unlock = false;
+    window_poll.relock = false;
 
     window_it.unlock = false;
     window_it.relock = false;
@@ -135,7 +135,7 @@ bool window_check_RTC_unlock(void)
     {
         if(phase_get() == PHASE_ASCEND) 
         {
-            window_pool.relock = true;
+            window_poll.relock = true;
             phase_set(PHASE_DEPLOY);
             broadcast_uart_send(MSG_ID_relock_window_POOL);
         }
@@ -145,9 +145,9 @@ bool window_check_RTC_unlock(void)
     /* WINDOW UNLOCK */
     else if(current_time.Sec >= WINDOW_UNLOCK_RTC)
     {
-        if(window_pool.unlock == false)
+        if(window_poll.unlock == false)
         {
-            window_pool.unlock = true;
+            window_poll.unlock = true;
             broadcast_uart_send(MSG_ID_unlock_window_POOL);
         }
         return true;

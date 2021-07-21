@@ -28,7 +28,6 @@
 #include "buzzer.h"
 #include "mpu6050.h"
 #include "ds3231.h"
-#include "alim.h"
 
 /* SW scheduler */
 #include "window.h"
@@ -116,49 +115,19 @@ int main(void)
 	/* hardware init */
 	buzzer_init();
 	jack_init();
-	MPU6050_Init();
 	DS3231_Init();
 	RECSYS_Init();
+  if(MPU6050_Init() == HAL_ERROR) SCB->AIRCR = 0x05fa0004;
 
-	/* check the all power supplies */
-	ALIM_check_all();
+  /* close the recovery system (blocking mode) */
+////////////////////////////////////////////////////////////////// NOT FORGET ////////////////////////////////////////::
+  //while(RECSYS_check_locked() != 0x03) {;}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/* set the scheduler in wait status */
 	HAL_Delay(1000);
 	phase_set(PHASE_WAIT);
 	broadcast_uart_send(MSG_ID_phase_wait);
-
-	//phase_set(PHASE_ASCEND);
-
-//	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-
-
-//int i = 0;
-//htim1.Instance->CCER |= (1 << 2);
-//htim1.Instance->CCR1 = 666;
-
-//		RECSYS_Unlock(RECSYS_M1 /*| RECSYS_M2*/);
-//		RECSYS_Start(RECSYS_M1 /*| RECSYS_M2*/);
-		//htim1.Instance->CCR1 = 1333;
-//while(1);
-//	while(1){
-//
-//		htim1.Instance->CCR1 = 666;
-		
-		
-//		while(i<1999)
-//			{
-//				htim1.Instance->CCR1 = i;
-//				HAL_Delay(1);
-//				i++;
-//			}
-//		while(i>1)
-//			{
-//				htim1.Instance->CCR1 = i;
-//				HAL_Delay(1);
-//				i--;
-//			}
-//	}
 
   /* USER CODE END 2 */
 

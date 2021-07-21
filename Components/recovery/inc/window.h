@@ -4,7 +4,7 @@
  *             the rocket. 
  *             it has to way to do it :
  *             - IT
- *             - Pool (RTC)
+ *             - Poll (RTC)
  *             you can use both at the same time to make it safer.
  * 
  * @date       2021-04-21

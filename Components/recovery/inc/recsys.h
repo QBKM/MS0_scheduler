@@ -63,17 +63,8 @@ typedef struct
 
 typedef struct 
 {
-    bool M1;
-    bool M2;
-    bool GLOBAL;
-}ADC_STATUS_t;
-
-
-typedef struct 
-{
     SYS_STATUS_t SYS;
     PIN_STATUS_t PIN;
-    ADC_STATUS_t ADC;
 }RECSYS_t;
 
 /* ------------------------------------------------------------- --
@@ -98,5 +89,6 @@ RECSYS_t RECSYS_Get_Struct(void);
 
 void RECSYS_user_button(void);
 void RECSYS_check_unlocked(void);
+uint8_t RECSYS_check_locked(void);
 
 #endif

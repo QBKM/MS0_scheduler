@@ -15,6 +15,7 @@
 #include "routines.h"
 
 #include "stdbool.h"
+#include "math.h"
 
 #include "window.h"
 
@@ -28,6 +29,7 @@
 #include "tca6408a.h"
 
 #include "config_file.h"
+#include "math.h"
 
 /* ------------------------------------------------------------- --
    defines
@@ -37,13 +39,21 @@
 /* ------------------------------------------------------------- --
    types
 -- ------------------------------------------------------------- */
-typedef struct 
+typedef struct cycles_t
 {
-    uint32_t time_ref;
-    uint32_t time_stamp;
-    uint8_t status;
-}REVERSE_t;
+   uint32_t total;
+   uint32_t wait;
+   uint32_t ascend;
+   uint32_t deploy;
+   uint32_t descend;
+   uint32_t landed;
+}cycles_t;
 
+typedef struct routines_t
+{
+   phase_t phase;
+   cycles_t cycles;
+}routines_t;
 
 /* ------------------------------------------------------------- --
    variables
@@ -52,8 +62,7 @@ routines_t routines = {0};
 
 uint32_t time_sync = 0;
 
-REVERSE_t reverse_M1 ={0};
-REVERSE_t reverse_M2 ={0};
+uint32_t timeout_recsys = 0;
 
 /* ------------------------------------------------------------- --
    functions
@@ -108,13 +117,14 @@ void routine_ascend(void)
     MPU6050_Read_All_Kalman();
 
     /* Temporal window [pooling mode]*/
-    if(window_check_RTC_unlock() == true)
+    if(window_check_RTC_unlock() == true || get_winU_IT_flag() == true)
     {
         // value to find
         MPU6050_t IMU = MPU6050_Get_Struct();
-        if((IMU.KalmanAngleY >= 100) 
-        || (IMU.KalmanAngleX >= 100) 
-        || (IMU.Az <= 0))
+        if((fabs(IMU.KalmanAngleY) >= 70) 
+        || (fabs(IMU.KalmanAngleX) >= 70))
+        //if(sqrtf((IMU.Ax * IMU.Ax) + (IMU.Ay * IMU.Ay) + (IMU.Az * IMU.Az)) < 0.5) // if total acc < 0.5 then freefall (lim -> 0)
+        //if("TODO")
         {
             phase_set(PHASE_DEPLOY);
         }
@@ -140,6 +150,9 @@ void routine_deploy(void)
 	RECSYS_Start(RECSYS_M1 | RECSYS_M2);
 
 	phase_set(PHASE_DESCEND);
+    broadcast_uart_send(MSG_ID_phase_descend);
+
+    timeout_recsys = HAL_GetTick();
 
     routines.cycles.deploy += 1;
     routines.cycles.total  += 1;
@@ -155,30 +168,9 @@ void routine_descend(void)
     /* read data MPU6050 */
 	MPU6050_Read_All_Kalman();
 
-    /* read recovery struct */
-    //RECSYS_Update();
-    //RECSYS_t RECOVERY = RECSYS_Get_Struct();
-
-//    /* reading the motor sensor */
-//    if((RECOVERY.PIN.CFDC_UNLOCK_M1 == HIGH) && (RECOVERY.SYS.M1 != UNLOCKED))
-//    {
-//        RECSYS_set_Sys(RECSYS_M1, UNLOCKED);
-//        RECSYS_Stop(RECSYS_M1);
-//    }
-//    
-//    if((RECOVERY.PIN.CFDC_UNLOCK_M2 == HIGH) && (RECOVERY.SYS.M2 != UNLOCKED))
-//    {
-//        RECSYS_set_Sys(RECSYS_M2, UNLOCKED);
-//        RECSYS_Stop(RECSYS_M2);
-//    }
-//
-//    if((RECOVERY.SYS.M1 == UNLOCKED) && (RECOVERY.SYS.M2 == UNLOCKED) && (RECOVERY.SYS.GLOBAL != UNLOCKED))
-//    {
-//        RECSYS_set_Sys(RECSYS_GLOBAL, UNLOCKED);
-//        broadcast_uart_send(MSG_ID_recsys_unlocked);
-//    }
-
     RECSYS_check_unlocked();
+
+    if(HAL_GetTick() > (timeout_recsys + 5000)) RECSYS_Stop(RECSYS_M1 | RECSYS_M2); 
 
     routines.cycles.descend += 1;
     routines.cycles.total   += 1;
@@ -194,80 +186,6 @@ void routine_landed(void)
 	routines.cycles.landed += 1;
     routines.cycles.total  += 1;
 }
-
-
-///* recovery without adc */
-//#ifndef RECSYS_NO_ADC
-//    /* test if ADC has trigged the IT flag */
-//    if(RECOVERY.ADC.GLOBAL == true)
-//    {
-//        RECSYS_Stop(RECSYS_M1 | RECSYS_M2);
-//
-//        /* reading the motor sensor */
-//        if(RECOVERY.PIN.CFDC_UNLOCK_M1 == HIGH)
-//        {
-//            RECSYS_set_Sys(RECSYS_M1, UNLOCKED);
-//            RECSYS_Stop(RECSYS_M1);
-//        }
-//        else
-//        {
-//            RECSYS_set_Sys(RECSYS_M1, REVERSE);
-//            
-//            if(reverse_M1.status == false)
-//            {
-//                reverse_M1.status = true;
-//                reverse_M1.time_ref = HAL_GetTick();
-//                RECSYS_Lock(RECSYS_M1);
-//            }
-//
-//            reverse_M1.time_stamp = HAL_GetTick();
-//            if(reverse_M1.time_ref <= (reverse_M1.time_stamp + RECSYS_REVERSE_DELAY)) 
-//            {
-//                RECSYS_set_Sys(RECSYS_M1, UNLOCKING);
-//                RECSYS_Unlock(RECSYS_M1);
-//                reverse_M1.status = false;
-//            }
-//        }
-//
-//        if(RECOVERY.PIN.CFDC_UNLOCK_M2 == HIGH)
-//        {
-//            RECSYS_set_Sys(RECSYS_M2, UNLOCKED);
-//            RECSYS_Stop(RECSYS_M2);
-//        }
-//        else
-//        {
-//            RECSYS_set_Sys(RECSYS_M2, REVERSE);
-//            
-//            if(reverse_M2.status == false)
-//            {
-//                reverse_M2.status = true;
-//                reverse_M2.time_ref = HAL_GetTick();
-//                RECSYS_Lock(RECSYS_M2);
-//            }
-//
-//            reverse_M2.time_stamp = HAL_GetTick();
-//            if(reverse_M2.time_ref <= (reverse_M2.time_stamp + RECSYS_REVERSE_DELAY))
-//            {
-//                RECSYS_set_Sys(RECSYS_M2, UNLOCKING);
-//                RECSYS_Unlock(RECSYS_M2);
-//                reverse_M2.status = false;
-//            }
-//        }
-//
-//        if((RECOVERY.SYS.M1 == UNLOCKED) && (RECOVERY.SYS.M2 == UNLOCKED))
-//        {
-//            RECSYS_set_Sys(RECSYS_GLOBAL, UNLOCKED);
-//            broadcast_uart_send(MSG_ID_recsys_unlocked);
-//            phase_set(PHASE_DESCEND);
-//        }
-//    }
-//
-//    if(RECOVERY.SYS.GLOBAL == UNLOCKED)
-//    {
-//        phase_set(PHASE_DESCEND);
-//        broadcast_uart_send(MSG_ID_recsys_unlocked);
-//    }
-//#endif
 
 
 

@@ -27,20 +27,14 @@ typedef enum
 	JACK_PLUGGED
 }jack_status_t;
 
-typedef struct 
-{
-	volatile bool	IT_flag;
-	jack_status_t 	jack_status;
-}jack_t;
-
 
 /* ------------------------------------------------------------- --
    Public prototypes
 -- ------------------------------------------------------------- */
 void            jack_init(void);
 
-void 			IT_flag_jack(void);
-void 			IT_routine_jack(void);
+void            IT_flag_jack(void);
+void            IT_routine_jack(void);
 
 void            set_jack_IT_flag(bool IT_flag);
 bool            get_jack_IT_flag(void);

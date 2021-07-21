@@ -35,12 +35,6 @@
 #define MSG_ID_recsys_start_motor   (uint8_t)0xC6
 #define MSG_ID_recsys_stop_motor    (uint8_t)0xC7
 
-/* alim monitoring ID */
-#define MSG_ID_alim_motor_ok        (uint8_t)0xD1
-#define MSG_ID_alim_motor_default   (uint8_t)0xD2
-#define MSG_ID_alim_seq_ok          (uint8_t)0xD3
-#define MSG_ID_alim_seq_default     (uint8_t)0xD4
-
 /* temporal window ID */
 #define MSG_ID_unlock_window_IT     (uint8_t)0xF1
 #define MSG_ID_unlock_window_POOL   (uint8_t)0xF2

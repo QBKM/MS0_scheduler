@@ -26,22 +26,7 @@ typedef enum
   PHASE_LANDED
 }phase_t;
 
-typedef struct cycles_t
-{
-   uint32_t total;
-   uint32_t wait;
-   uint32_t ascend;
-   uint32_t deploy;
-   uint32_t descend;
-   uint32_t landed;
-}cycles_t;
 
-
-typedef struct routines_t
-{
-   phase_t phase;
-   cycles_t cycles;
-}routines_t;
 
 
 /* ------------------------------------------------------------- --
