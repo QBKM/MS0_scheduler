@@ -124,7 +124,7 @@ uint8_t DS3231_Set_Time()
 	uint8_t startAddr = DS3231_REG_TIME;
 	uint8_t data[8] = {startAddr, D2B(DS3231.Sec), D2B(DS3231.Min), D2B(DS3231.Hour), DS3231.DaysOfWeek, D2B(DS3231.Date), D2B(DS3231.Month), D2B(DS3231.Year)};
 
-	if(HAL_I2C_Master_Transmit(&hi2c1, DS3231_ADDR, data, sizeof(data), HAL_MAX_DELAY)) return HAL_ERROR;	
+	if(HAL_I2C_Master_Transmit(&hi2c1, DS3231_ADDR, data, sizeof(data), 10)) return HAL_ERROR;
 	
 	return HAL_OK;
 }
